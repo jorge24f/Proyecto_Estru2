@@ -428,6 +428,9 @@ public class Main extends javax.swing.JFrame {
             }
         });
         jp_crear_nuevo_archivo.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jp_crear_nuevo_archivoMouseClicked(evt);
+            }
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 jp_crear_nuevo_archivoMouseExited(evt);
             }
@@ -995,6 +998,27 @@ public class Main extends javax.swing.JFrame {
     private void jp_crear_nuevo_archivoMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jp_crear_nuevo_archivoMouseExited
         jp_crear_nuevo_archivo.setBackground(new Color(0,120,212));
     }//GEN-LAST:event_jp_crear_nuevo_archivoMouseExited
+
+    private void jp_crear_nuevo_archivoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jp_crear_nuevo_archivoMouseClicked
+        if(!(jtf_nombre_nuevo_archivo.getText().equals("Ingrese el nombre") || jtf_nombre_nuevo_archivo.getText().equals(""))){
+            String filename = jtf_nombre_nuevo_archivo.getText();
+            File archivo = new File("./Archivos/"+filename+".txt");
+            try {
+                if(archivo.createNewFile()){
+                    JOptionPane.showMessageDialog(jp_new_file, "Archivo creado exitosamente!");
+                } else {
+                    JOptionPane.showMessageDialog(jp_new_file, "Ya existe un archivo con el mismo nombre en esta ubicación.");
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else {
+            JOptionPane.showMessageDialog(jp_new_file, "Nombre invalido!");
+        }
+        
+        jtf_nombre_nuevo_archivo.setText("Ingrese el nombre");
+        jtf_nombre_nuevo_archivo.setForeground(new Color(204,204,204));
+    }//GEN-LAST:event_jp_crear_nuevo_archivoMouseClicked
 
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
