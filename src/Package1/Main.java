@@ -4,13 +4,18 @@ package Package1;
 // @author jflg2
 
 import java.awt.Color;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 public class Main extends javax.swing.JFrame {
 
@@ -29,6 +34,8 @@ public class Main extends javax.swing.JFrame {
         jtp_registros.setVisible(false);
         jtp_indices.setVisible(false);
         jtp_estandarizacion.setVisible(false);
+        
+        jl_archivo_actual_open.setText("Archivo actual: ");
     }
 
     @SuppressWarnings("unchecked")
@@ -70,6 +77,11 @@ public class Main extends javax.swing.JFrame {
         jp_crear_nuevo_archivo = new javax.swing.JPanel();
         jLabel136 = new javax.swing.JLabel();
         jp_open_file = new javax.swing.JPanel();
+        jp_abrir_archivo = new javax.swing.JPanel();
+        jLabel141 = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jta_abrir_archivo = new javax.swing.JTextArea();
+        jl_archivo_actual_open = new javax.swing.JLabel();
         jp_save_file = new javax.swing.JPanel();
         jp_close_file = new javax.swing.JPanel();
         jp_exit = new javax.swing.JPanel();
@@ -480,15 +492,68 @@ public class Main extends javax.swing.JFrame {
 
         jtp_archivo.addTab("Nuevo", jp_new_file);
 
+        jp_abrir_archivo.setBackground(new java.awt.Color(0, 120, 212));
+        jp_abrir_archivo.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
+            public void mouseMoved(java.awt.event.MouseEvent evt) {
+                jp_abrir_archivoMouseMoved(evt);
+            }
+        });
+        jp_abrir_archivo.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jp_abrir_archivoMouseClicked(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                jp_abrir_archivoMouseExited(evt);
+            }
+        });
+
+        jLabel141.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel141.setText("Abrir");
+
+        javax.swing.GroupLayout jp_abrir_archivoLayout = new javax.swing.GroupLayout(jp_abrir_archivo);
+        jp_abrir_archivo.setLayout(jp_abrir_archivoLayout);
+        jp_abrir_archivoLayout.setHorizontalGroup(
+            jp_abrir_archivoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jp_abrir_archivoLayout.createSequentialGroup()
+                .addContainerGap(28, Short.MAX_VALUE)
+                .addComponent(jLabel141)
+                .addGap(26, 26, 26))
+        );
+        jp_abrir_archivoLayout.setVerticalGroup(
+            jp_abrir_archivoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jLabel141, javax.swing.GroupLayout.DEFAULT_SIZE, 36, Short.MAX_VALUE)
+        );
+
+        jta_abrir_archivo.setEditable(false);
+        jta_abrir_archivo.setColumns(20);
+        jta_abrir_archivo.setRows(5);
+        jScrollPane1.setViewportView(jta_abrir_archivo);
+
+        jl_archivo_actual_open.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
+        jl_archivo_actual_open.setText("Archivo actual: ");
+
         javax.swing.GroupLayout jp_open_fileLayout = new javax.swing.GroupLayout(jp_open_file);
         jp_open_file.setLayout(jp_open_fileLayout);
         jp_open_fileLayout.setHorizontalGroup(
             jp_open_fileLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 845, Short.MAX_VALUE)
+            .addGroup(jp_open_fileLayout.createSequentialGroup()
+                .addGap(25, 25, 25)
+                .addGroup(jp_open_fileLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jl_archivo_actual_open)
+                    .addComponent(jp_abrir_archivo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 795, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(25, Short.MAX_VALUE))
         );
         jp_open_fileLayout.setVerticalGroup(
             jp_open_fileLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 542, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jp_open_fileLayout.createSequentialGroup()
+                .addGap(20, 20, 20)
+                .addComponent(jp_abrir_archivo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jl_archivo_actual_open)
+                .addGap(4, 4, 4)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 426, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(22, Short.MAX_VALUE))
         );
 
         jtp_archivo.addTab("Abrir", jp_open_file);
@@ -981,6 +1046,19 @@ public class Main extends javax.swing.JFrame {
     private void jtp_archivoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jtp_archivoMouseClicked
         if(jtp_archivo.getSelectedIndex() == 4){
             System.exit(0);
+        } else if(jtp_archivo.getSelectedIndex() == 3){
+            if(opened_file == null){
+                JOptionPane.showMessageDialog(jp_close_file, "No hay ningun archivo abierto.");
+            } else {
+                int seleccion = JOptionPane.showConfirmDialog(jp_close_file, "Desea cerrar " + opened_file.getName(), "Confirmar", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                if (seleccion == JOptionPane.OK_OPTION){
+                    JOptionPane.showMessageDialog(jp_close_file, "Archivo cerrado exitosamente!");
+                    opened_file = null;
+                    jl_archivo_actual_open.setText("Archivo actual: ");
+                    jta_abrir_archivo.setText("");
+                }
+            }
+            jtp_archivo.setSelectedIndex(1);
         }
     }//GEN-LAST:event_jtp_archivoMouseClicked
 
@@ -1020,6 +1098,47 @@ public class Main extends javax.swing.JFrame {
         jtf_nombre_nuevo_archivo.setForeground(new Color(204,204,204));
     }//GEN-LAST:event_jp_crear_nuevo_archivoMouseClicked
 
+    private void jp_abrir_archivoMouseMoved(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jp_abrir_archivoMouseMoved
+       jp_abrir_archivo.setBackground(new Color(0,100,212));
+    }//GEN-LAST:event_jp_abrir_archivoMouseMoved
+
+    private void jp_abrir_archivoMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jp_abrir_archivoMouseExited
+        jp_abrir_archivo.setBackground(new Color(0,120,212));
+    }//GEN-LAST:event_jp_abrir_archivoMouseExited
+
+    private void jp_abrir_archivoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jp_abrir_archivoMouseClicked
+        FileReader fr = null;
+        BufferedReader br = null;
+        jta_abrir_archivo.setText("");
+        try {
+            JFileChooser file_chooser = new JFileChooser("./Archivos");
+            FileNameExtensionFilter filtro = new FileNameExtensionFilter("Archivos de texto", "txt");
+            file_chooser.setFileFilter(filtro);
+            file_chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+            int seleccion = file_chooser.showOpenDialog(this);
+            if(seleccion == JFileChooser.APPROVE_OPTION){
+                jl_archivo_actual_open.setText("Archivo actual: "+file_chooser.getSelectedFile().getName());
+                opened_file = file_chooser.getSelectedFile();
+                fr = new FileReader(opened_file);
+                br = new BufferedReader(fr);
+                String linea;
+                while((linea=br.readLine()) != null ){
+                    jta_abrir_archivo.append(linea);
+                    jta_abrir_archivo.append("\n");
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            br.close();
+            fr.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
+    }//GEN-LAST:event_jp_abrir_archivoMouseClicked
+
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -1055,18 +1174,26 @@ public class Main extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel136;
+    private javax.swing.JLabel jLabel137;
+    private javax.swing.JLabel jLabel138;
+    private javax.swing.JLabel jLabel139;
+    private javax.swing.JLabel jLabel140;
+    private javax.swing.JLabel jLabel141;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel3;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel jl_FechaActual_home;
     private javax.swing.JLabel jl_abrevNombre_home;
+    private javax.swing.JLabel jl_archivo_actual_open;
     private javax.swing.JLabel jl_text_archivo;
     private javax.swing.JLabel jl_text_campos;
     private javax.swing.JLabel jl_text_estandarizacion;
     private javax.swing.JLabel jl_text_indices;
     private javax.swing.JLabel jl_text_registros;
     private javax.swing.JLabel jl_username;
+    private javax.swing.JPanel jp_abrir_archivo;
     private javax.swing.JPanel jp_borrar_campos;
     private javax.swing.JPanel jp_borrar_registros;
     private javax.swing.JPanel jp_buscar_registros;
@@ -1074,6 +1201,10 @@ public class Main extends javax.swing.JFrame {
     private javax.swing.JPanel jp_crear_campos;
     private javax.swing.JPanel jp_crear_indices;
     private javax.swing.JPanel jp_crear_nuevo_archivo;
+    private javax.swing.JPanel jp_crear_nuevo_archivo1;
+    private javax.swing.JPanel jp_crear_nuevo_archivo2;
+    private javax.swing.JPanel jp_crear_nuevo_archivo3;
+    private javax.swing.JPanel jp_crear_nuevo_archivo4;
     private javax.swing.JPanel jp_exit;
     private javax.swing.JPanel jp_exit_home;
     private javax.swing.JPanel jp_exportar_excel;
@@ -1101,6 +1232,7 @@ public class Main extends javax.swing.JFrame {
     private javax.swing.JPanel jp_sideBar_Estandarizacion;
     private javax.swing.JPanel jp_sideBar_Indices;
     private javax.swing.JPanel jp_sideBar_Registros;
+    private javax.swing.JTextArea jta_abrir_archivo;
     private javax.swing.JTextField jtf_nombre_nuevo_archivo;
     private javax.swing.JTabbedPane jtp_archivo;
     private javax.swing.JTabbedPane jtp_campos;
@@ -1116,4 +1248,6 @@ public class Main extends javax.swing.JFrame {
     private boolean flag_text_registros;
     private boolean flag_text_indices;
     private boolean flag_text_estandarizacion;
+    
+    File opened_file = null;
 }
