@@ -1,3 +1,2 @@
-Jorge Lopez 18 años
-Fran Miguel, futbol
-Jose luis, soltero
+Nombre;String;false;9;
+Edad;int;false;3;
