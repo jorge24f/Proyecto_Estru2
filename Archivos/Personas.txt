@@ -1,2 +1,0 @@
-Nombre;String;false;9;
-Edad;int;false;3;

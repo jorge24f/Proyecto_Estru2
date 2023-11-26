@@ -608,7 +608,7 @@
               <Layout>
                 <DimensionLayout dim="0">
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Group type="102" alignment="0" attributes="0">
+                      <Group type="102" attributes="0">
                           <EmptySpace min="-2" pref="38" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Component id="jLabel3" min="-2" max="-2" attributes="0"/>
@@ -937,9 +937,9 @@
                               <Component id="jLabel7" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="jtf_nombre_crear_campo" min="-2" pref="30" max="-2" attributes="0"/>
-                              <Component id="jtf_longitud_crear_campo" min="-2" pref="30" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="3" attributes="0">
+                              <Component id="jtf_nombre_crear_campo" alignment="3" min="-2" pref="30" max="-2" attributes="0"/>
+                              <Component id="jtf_longitud_crear_campo" alignment="3" min="-2" pref="30" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace type="separate" max="-2" attributes="0"/>
                           <Component id="jLabel5" min="-2" max="-2" attributes="0"/>
@@ -1121,26 +1121,23 @@
                     </Component>
                   </SubComponents>
                 </Container>
-                <Component class="javax.swing.JTextField" name="jtf_longitud_crear_campo">
-                  <Properties>
-                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                      <Font name="Segoe UI" size="12" style="0"/>
-                    </Property>
-                    <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                      <Color blue="cc" green="cc" red="cc" type="rgb"/>
-                    </Property>
-                    <Property name="text" type="java.lang.String" value="Ingrese la longitud"/>
-                  </Properties>
-                  <Events>
-                    <EventHandler event="mousePressed" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="jtf_longitud_crear_campoMousePressed"/>
-                  </Events>
-                </Component>
                 <Component class="javax.swing.JLabel" name="jl_entidad_actual_crear_campo">
                   <Properties>
                     <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                       <Font name="Segoe UI" size="12" style="0"/>
                     </Property>
                     <Property name="text" type="java.lang.String" value="Entidad Actual: "/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JFormattedTextField" name="jtf_longitud_crear_campo">
+                  <Properties>
+                    <Property name="formatterFactory" type="javax.swing.JFormattedTextField$AbstractFormatterFactory" editor="org.netbeans.modules.form.editors.AbstractFormatterFactoryEditor" preCode="try {" postCode="} catch (java.text.ParseException ex) {&#xa;ex.printStackTrace();&#xa;}">
+                      <Format format="##" subtype="-1" type="5"/>
+                    </Property>
+                    <Property name="focusLostBehavior" type="int" value="3"/>
+                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                      <Font name="Segoe UI" size="12" style="0"/>
+                    </Property>
                   </Properties>
                 </Component>
               </SubComponents>
@@ -1218,43 +1215,34 @@
                       <Group type="102" alignment="0" attributes="0">
                           <EmptySpace min="-2" pref="37" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
+                              <Component id="jrb_tipo_char_mod_campo" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Component id="jrb_tipo_double_mod_campo" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Component id="jrb_tipo_int_mod_campo" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Component id="jrb_esLlave_mod" min="-2" max="-2" attributes="0"/>
+                              <Component id="jrb_NoesLlave_mod" min="-2" max="-2" attributes="0"/>
+                              <Component id="jrb_tipo_string_mod_campo" min="-2" max="-2" attributes="0"/>
+                              <Component id="jLabel10" min="-2" max="-2" attributes="0"/>
+                              <Component id="jl_modificar_campos" min="-2" max="-2" attributes="0"/>
+                              <Component id="jcb_campos_a_modificar" min="-2" pref="530" max="-2" attributes="0"/>
                               <Group type="102" alignment="0" attributes="0">
                                   <Group type="103" groupAlignment="0" attributes="0">
-                                      <Component id="jrb_tipo_char_mod_campo" alignment="0" min="-2" max="-2" attributes="0"/>
-                                      <Component id="jrb_tipo_double_mod_campo" alignment="0" min="-2" max="-2" attributes="0"/>
-                                      <Component id="jrb_tipo_int_mod_campo" alignment="0" min="-2" max="-2" attributes="0"/>
-                                  </Group>
-                                  <EmptySpace max="32767" attributes="0"/>
-                              </Group>
-                              <Group type="102" attributes="0">
-                                  <Group type="103" groupAlignment="0" attributes="0">
-                                      <Component id="jrb_esLlave_mod" min="-2" max="-2" attributes="0"/>
-                                      <Component id="jrb_NoesLlave_mod" min="-2" max="-2" attributes="0"/>
-                                      <Component id="jrb_tipo_string_mod_campo" min="-2" max="-2" attributes="0"/>
-                                      <Component id="jLabel10" min="-2" max="-2" attributes="0"/>
-                                      <Component id="jl_modificar_campos" min="-2" max="-2" attributes="0"/>
-                                      <Component id="jcb_campos_a_modificar" min="-2" pref="530" max="-2" attributes="0"/>
-                                      <Group type="102" alignment="0" attributes="0">
-                                          <Group type="103" groupAlignment="0" attributes="0">
-                                              <Group type="102" alignment="1" attributes="0">
-                                                  <Component id="jLabel9" min="-2" max="-2" attributes="0"/>
-                                                  <EmptySpace min="-2" pref="233" max="-2" attributes="0"/>
-                                              </Group>
-                                              <Group type="102" alignment="0" attributes="0">
-                                                  <Component id="jtf_nuevo_nombre_campo" min="-2" pref="200" max="-2" attributes="0"/>
-                                                  <EmptySpace min="-2" pref="180" max="-2" attributes="0"/>
-                                              </Group>
-                                          </Group>
-                                          <Group type="103" groupAlignment="0" attributes="0">
-                                              <Component id="jLabel12" min="-2" max="-2" attributes="0"/>
-                                              <Component id="jtf_nueva_longitud_campo" min="-2" pref="200" max="-2" attributes="0"/>
-                                          </Group>
+                                      <Group type="102" alignment="1" attributes="0">
+                                          <Component id="jLabel9" min="-2" max="-2" attributes="0"/>
+                                          <EmptySpace min="-2" pref="233" max="-2" attributes="0"/>
                                       </Group>
-                                      <Component id="jLabel11" alignment="0" min="-2" max="-2" attributes="0"/>
+                                      <Group type="102" alignment="0" attributes="0">
+                                          <Component id="jtf_nuevo_nombre_campo" min="-2" pref="200" max="-2" attributes="0"/>
+                                          <EmptySpace min="-2" pref="180" max="-2" attributes="0"/>
+                                      </Group>
                                   </Group>
-                                  <EmptySpace pref="228" max="32767" attributes="0"/>
+                                  <Group type="103" groupAlignment="0" attributes="0">
+                                      <Component id="jLabel12" min="-2" max="-2" attributes="0"/>
+                                      <Component id="jtf_nueva_longitud_campo" min="-2" pref="200" max="-2" attributes="0"/>
+                                  </Group>
                               </Group>
+                              <Component id="jLabel11" alignment="0" min="-2" max="-2" attributes="0"/>
                           </Group>
+                          <EmptySpace max="32767" attributes="0"/>
                       </Group>
                       <Group type="102" alignment="0" attributes="0">
                           <EmptySpace min="-2" pref="296" max="-2" attributes="0"/>

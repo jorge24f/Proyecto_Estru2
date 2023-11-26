@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Formatter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
@@ -22,6 +23,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import java.util.Scanner;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
+import javax.swing.JFormattedTextField;
 
 public class Main extends javax.swing.JFrame {
 
@@ -42,6 +44,7 @@ public class Main extends javax.swing.JFrame {
         jtp_estandarizacion.setVisible(false);
         
         jl_archivo_actual_open.setText("Archivo actual: ");
+    
     }
 
     @SuppressWarnings("unchecked")
@@ -109,8 +112,8 @@ public class Main extends javax.swing.JFrame {
         jLabel7 = new javax.swing.JLabel();
         jp_agregar_campo = new javax.swing.JPanel();
         jLabel142 = new javax.swing.JLabel();
-        jtf_longitud_crear_campo = new javax.swing.JTextField();
         jl_entidad_actual_crear_campo = new javax.swing.JLabel();
+        jtf_longitud_crear_campo = new javax.swing.JFormattedTextField();
         jp_listar_campos = new javax.swing.JPanel();
         jl_listar_campos = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
@@ -720,17 +723,16 @@ public class Main extends javax.swing.JFrame {
             .addComponent(jLabel142, javax.swing.GroupLayout.DEFAULT_SIZE, 36, Short.MAX_VALUE)
         );
 
-        jtf_longitud_crear_campo.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
-        jtf_longitud_crear_campo.setForeground(new java.awt.Color(204, 204, 204));
-        jtf_longitud_crear_campo.setText("Ingrese la longitud");
-        jtf_longitud_crear_campo.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                jtf_longitud_crear_campoMousePressed(evt);
-            }
-        });
-
         jl_entidad_actual_crear_campo.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
         jl_entidad_actual_crear_campo.setText("Entidad Actual: ");
+
+        try {
+            jtf_longitud_crear_campo.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.MaskFormatter("##")));
+        } catch (java.text.ParseException ex) {
+            ex.printStackTrace();
+        }
+        jtf_longitud_crear_campo.setFocusLostBehavior(javax.swing.JFormattedTextField.PERSIST);
+        jtf_longitud_crear_campo.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
 
         javax.swing.GroupLayout jp_crear_camposLayout = new javax.swing.GroupLayout(jp_crear_campos);
         jp_crear_campos.setLayout(jp_crear_camposLayout);
@@ -769,7 +771,7 @@ public class Main extends javax.swing.JFrame {
                     .addComponent(jLabel4)
                     .addComponent(jLabel7))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jp_crear_camposLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jp_crear_camposLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jtf_nombre_crear_campo, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jtf_longitud_crear_campo, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
@@ -925,33 +927,28 @@ public class Main extends javax.swing.JFrame {
             .addGroup(jp_modificar_camposLayout.createSequentialGroup()
                 .addGap(37, 37, 37)
                 .addGroup(jp_modificar_camposLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jrb_tipo_char_mod_campo)
+                    .addComponent(jrb_tipo_double_mod_campo)
+                    .addComponent(jrb_tipo_int_mod_campo)
+                    .addComponent(jrb_esLlave_mod)
+                    .addComponent(jrb_NoesLlave_mod)
+                    .addComponent(jrb_tipo_string_mod_campo)
+                    .addComponent(jLabel10)
+                    .addComponent(jl_modificar_campos)
+                    .addComponent(jcb_campos_a_modificar, javax.swing.GroupLayout.PREFERRED_SIZE, 530, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jp_modificar_camposLayout.createSequentialGroup()
                         .addGroup(jp_modificar_camposLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jrb_tipo_char_mod_campo)
-                            .addComponent(jrb_tipo_double_mod_campo)
-                            .addComponent(jrb_tipo_int_mod_campo))
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(jp_modificar_camposLayout.createSequentialGroup()
-                        .addGroup(jp_modificar_camposLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jrb_esLlave_mod)
-                            .addComponent(jrb_NoesLlave_mod)
-                            .addComponent(jrb_tipo_string_mod_campo)
-                            .addComponent(jLabel10)
-                            .addComponent(jl_modificar_campos)
-                            .addComponent(jcb_campos_a_modificar, javax.swing.GroupLayout.PREFERRED_SIZE, 530, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jp_modificar_camposLayout.createSequentialGroup()
+                                .addComponent(jLabel9)
+                                .addGap(233, 233, 233))
                             .addGroup(jp_modificar_camposLayout.createSequentialGroup()
-                                .addGroup(jp_modificar_camposLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jp_modificar_camposLayout.createSequentialGroup()
-                                        .addComponent(jLabel9)
-                                        .addGap(233, 233, 233))
-                                    .addGroup(jp_modificar_camposLayout.createSequentialGroup()
-                                        .addComponent(jtf_nuevo_nombre_campo, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(180, 180, 180)))
-                                .addGroup(jp_modificar_camposLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel12)
-                                    .addComponent(jtf_nueva_longitud_campo, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                            .addComponent(jLabel11))
-                        .addContainerGap(228, Short.MAX_VALUE))))
+                                .addComponent(jtf_nuevo_nombre_campo, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(180, 180, 180)))
+                        .addGroup(jp_modificar_camposLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel12)
+                            .addComponent(jtf_nueva_longitud_campo, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(jLabel11))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(jp_modificar_camposLayout.createSequentialGroup()
                 .addGap(296, 296, 296)
                 .addComponent(jp_boton_modificar_campo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1527,6 +1524,31 @@ public class Main extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(jp_save_file, "Se ha guardado el archivo.");
             }
              jtp_archivo.setSelectedIndex(0);
+        } else if(jtp_archivo.getSelectedIndex() == 0){
+            jtf_nombre_nuevo_archivo.setText("Ingrese el nombre");
+            jtf_nombre_nuevo_archivo.setForeground(new Color(204,204,204));
+        } else if(jtp_archivo.getSelectedIndex() == 1){
+            if(opened_file != null){
+                try {
+                    FileReader fr = null;
+                    BufferedReader br = null;
+                    fr = new FileReader(opened_file);
+                    br = new BufferedReader(fr);
+                    String linea;
+                    while((linea=br.readLine()) != null ){
+                        jta_abrir_archivo.append(linea);
+                        jta_abrir_archivo.append("\n");
+                    }
+                    try {
+                        br.close();
+                        fr.close();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }//GEN-LAST:event_jtp_archivoMouseClicked
 
@@ -1547,21 +1569,34 @@ public class Main extends javax.swing.JFrame {
 
     private void jp_crear_nuevo_archivoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jp_crear_nuevo_archivoMouseClicked
         if(!(jtf_nombre_nuevo_archivo.getText().equals("Ingrese el nombre") || jtf_nombre_nuevo_archivo.getText().equals(""))){
-            String filename = jtf_nombre_nuevo_archivo.getText();
-            File archivo = new File("./Archivos/"+filename+".txt");
-            try {
-                if(archivo.createNewFile()){
-                    JOptionPane.showMessageDialog(jp_new_file, "Archivo creado exitosamente!");
-                } else {
-                    JOptionPane.showMessageDialog(jp_new_file, "Ya existe un archivo con el mismo nombre en esta ubicación.");
+            String filename = jtf_nombre_nuevo_archivo.getText()+".txt";
+            JFileChooser file_chooser = new JFileChooser("./Archivos");
+            file_chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+            int seleccion = file_chooser.showOpenDialog(this);
+            if(seleccion == JFileChooser.APPROVE_OPTION){
+                File archivo = new File(file_chooser.getSelectedFile()+"\\"+filename);
+                //JOptionPane.showMessageDialog(jp_new_file, file_chooser.getSelectedFile()+"\\"+filename+".txt");
+                try {
+                    if(archivo.createNewFile()){
+                        JOptionPane.showMessageDialog(jp_new_file, "Archivo creado exitosamente!");
+                        // Se abre el archivo
+                        jl_archivo_actual_open.setText("Archivo actual: "+filename);
+                        jl_entidad_actual_crear_campo.setText("Entidad actual: "+filename);
+                        jl_listar_campos.setText("Campos de la entidad: "+filename);
+                        jl_borrar_campo.setText("Campos de la entidad: "+filename);
+                        jl_modificar_campos.setText("Entidad Actual: "+filename);
+                        opened_file = archivo;
+                    } else {
+                        JOptionPane.showMessageDialog(jp_new_file, "Ya existe un archivo con el mismo nombre en esta ubicación.");
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
             }
         } else {
             JOptionPane.showMessageDialog(jp_new_file, "Nombre invalido!");
         }
-        
+   
         jtf_nombre_nuevo_archivo.setText("Ingrese el nombre");
         jtf_nombre_nuevo_archivo.setForeground(new Color(204,204,204));
     }//GEN-LAST:event_jp_crear_nuevo_archivoMouseClicked
@@ -1659,46 +1694,62 @@ public class Main extends javax.swing.JFrame {
         jp_agregar_campo.setBackground(new Color(0,120,212));
     }//GEN-LAST:event_jp_agregar_campoMouseExited
 
-    private void jtf_longitud_crear_campoMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jtf_longitud_crear_campoMousePressed
-        if(jtf_longitud_crear_campo.getText().equals("Ingrese la longitud")){
-            jtf_longitud_crear_campo.setText("");
-            jtf_longitud_crear_campo.setForeground(Color.BLACK);
-        }
-    }//GEN-LAST:event_jtf_longitud_crear_campoMousePressed
-
     private void jp_agregar_campoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jp_agregar_campoMouseClicked
-        String nombreCampo = jtf_nombre_crear_campo.getText();
-        String tipo;
-        if(jrb_tipo_string_crear_campo.isSelected()){
-            tipo = "String";
-        } else if(jrb_tipo_int_crear_campo.isSelected()){
-            tipo = "int";
-        } else if(jrb_tipo_double_crear_campo.isSelected()){
-            tipo = "double";
-        } else {
-            tipo = "char";
-        }
-        boolean esLlave;
-        if(jrb_EsLlave_primaria_crear_campo.isSelected()){
-            esLlave = true;
-        } else {
-            esLlave = false;
-        }
-        int longitud; 
-        if(jtf_longitud_crear_campo.getText().charAt(0) >= 49 && jtf_longitud_crear_campo.getText().charAt(0) <= 57 && jtf_longitud_crear_campo.getText().length() == 1){
-            longitud= Integer.parseInt(jtf_longitud_crear_campo.getText());  
-            Campo campo = new Campo(nombreCampo, tipo, longitud, esLlave);
-            campos_Archivo_Actual.add(campo);
-            try {
-                escribir_campos();
-                //JOptionPane.showMessageDialog(jp_crear_campos, campo.toString());
-            } catch (IOException e) {
-                e.printStackTrace();
+        // Metodo para crearle un campo a una entidad 
+
+        // Verificar que todos los campos se hayan llenado
+        if(validar_nombre_ingresado_campo(jtf_nombre_crear_campo.getText()) && bg_tipo_de_dato_crear_campo.getSelection() != null && bg_esLlavePrimaria_crear_campo.getSelection() != null && jtf_longitud_crear_campo.isEditValid()){
+            // Obtener datos del campo
+        
+            // Obtener nombre del campo
+            String nombreCampo = jtf_nombre_crear_campo.getText();
+
+            // Obtener el tipo de dato del campo
+            String tipo;
+            if(jrb_tipo_string_crear_campo.isSelected()){
+                tipo = "String";
+            } else if(jrb_tipo_int_crear_campo.isSelected()){
+                tipo = "int";
+            } else if(jrb_tipo_double_crear_campo.isSelected()){
+                tipo = "double";
+            } else {
+                tipo = "char";
             }
-            JOptionPane.showMessageDialog(jp_crear_campos, "Campo agregado exitosamente a: " + opened_file.getName());
-            clean_panel_crear_campo();
-        } else {
-            JOptionPane.showMessageDialog(jp_crear_campos, "Longitud invalida.");
+
+            // Verificar si es campo llave o no es 
+            boolean esLlave = jrb_EsLlave_primaria_crear_campo.isSelected();
+            
+            // Obtener longitud del campo
+            String cad_longitud = jtf_longitud_crear_campo.getText();
+
+            // Validar si la longitud contiene espacio debido a la mascara del jformattedTextfield
+            if(cad_longitud.contains(" ")){
+                cad_longitud = cortar_string(cad_longitud);
+            }
+            int longitud = Integer.parseInt(cad_longitud);
+            
+            //  Condicion para validar que el nombre del campo no este repetido 
+            //  Validar la longitud del campo
+            //  Validar que por lo menos a un radio button de cada button group haya sido seleccionado
+            if(validar_nombre_campo(nombreCampo) && validar_longitud_campo(longitud, longitud_max_campo)  && validar_unico_campo_llave(jrb_EsLlave_primaria_crear_campo.isSelected())){
+                agregar_campo_a_entidad(nombreCampo, tipo, esLlave, longitud);
+            }  else if(!validar_nombre_campo(jtf_nombre_crear_campo.getText())){ // Validar que no se repita el nombre del campo
+                JOptionPane.showMessageDialog(jp_crear_campos, "Ya existe un campo con este nombre en esta entidad!");
+            } else if(!validar_longitud_campo(longitud, longitud_max_campo)){
+                JOptionPane.showMessageDialog(jp_crear_campos, "La longitud del campo debe ser mayor a 0 y menor a " + longitud_max_campo + " !");
+            } else if(!validar_unico_campo_llave(jrb_EsLlave_primaria_crear_campo.isSelected())){
+                seleccionar_campo_como_llave();
+                esLlave = jrb_EsLlave_primaria_crear_campo.isSelected();
+                agregar_campo_a_entidad(nombreCampo, tipo, esLlave, longitud);
+            } 
+        } else if(!validar_nombre_ingresado_campo(jtf_nombre_crear_campo.getText())){ // Validar que el nombre se valido
+            JOptionPane.showMessageDialog(jp_crear_campos, "Nombre invalido!");
+        } else if(bg_tipo_de_dato_crear_campo.getSelection() == null){ // Validar que el tipo de dato del campo haya sido seleccionado
+            JOptionPane.showMessageDialog(jp_crear_campos, "Debe seleccionar el tipo de dato!");
+        } else if(bg_esLlavePrimaria_crear_campo.getSelection() == null){ // Validar que se haya seleccionado si es llave o no
+            JOptionPane.showMessageDialog(jp_crear_campos, "Debe seleccionar si el campo es llave o no!");
+        } else if(jtf_longitud_crear_campo.getValue() == null){
+            JOptionPane.showMessageDialog(jp_crear_campos, "Debe ingresar la longitud del campo!");
         }
     }//GEN-LAST:event_jp_agregar_campoMouseClicked
 
@@ -1833,7 +1884,82 @@ public class Main extends javax.swing.JFrame {
             }
         });
     }
+    
+    void seleccionar_campo_como_llave(){
+        int seleccion = JOptionPane.showConfirmDialog(jp_crear_campos, "Ya existe un campo llave en esta entidad! \nDesea establecer este campo como llave?", "Confirmar", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+        if (seleccion == JOptionPane.OK_OPTION){
+            cargar_campos();
+            for(Campo c : campos_Archivo_Actual){
+                if(c.isEsLlave()){
+                    c.setEsLlave(false);
+                }
+            }
+        } else {
+            jrb_NoEsLlave_primaria_crear_campo.setSelected(true);
+        }
+    }
+    
+    void agregar_campo_a_entidad(String nombreCampo, String tipo, boolean esLlave, int longitud){
+        // Creamos el objeto tipo campo
+            Campo campo = new Campo(nombreCampo, tipo, longitud, esLlave);
 
+            // Añadimos el campo a la RAM mediante el arrayList de campos
+            campos_Archivo_Actual.add(campo);
+            try {
+                // Guardamos los campos en la ROM
+                escribir_campos();
+                //JOptionPane.showMessageDialog(jp_crear_campos, campo.toString());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            JOptionPane.showMessageDialog(jp_crear_campos, "Campo agregado exitosamente a: " + opened_file.getName());
+
+            // Limpianos el todos los texfields y radiobuttons del apartado crear campo
+            clean_panel_crear_campo();
+    }
+    
+    boolean validar_nombre_ingresado_campo(String text){
+        if(text.equals("Ingrese el nombre") || text.equals("")){
+            return false;
+        } else{
+            return true;
+        }
+    }
+    
+    String cortar_string(String cad){
+        String number = "";
+        number += cad.charAt(0);
+        return number;
+    }
+    
+    boolean validar_unico_campo_llave(boolean miLlave){
+        cargar_campos();
+        for(Campo c : campos_Archivo_Actual){
+            if(c.isEsLlave() && miLlave){
+                return false;
+            }
+        }
+        return true;
+    }
+    
+    boolean validar_nombre_campo(String name){
+        cargar_campos();
+        for(Campo c : campos_Archivo_Actual){
+            if(c.getNombre().equals(name)){
+                return false;
+            }
+        }
+        return true;
+    }
+    
+    boolean validar_longitud_campo(int longitud_campo, int valor_max){
+        if(longitud_campo > 0 && longitud_campo < valor_max){
+            return true;
+        } else{
+            return false;
+        }
+    }
+    
     void clean_panel_crear_campo(){
         jtf_nombre_crear_campo.setText("Ingrese el nombre");
         jtf_nombre_crear_campo.setForeground(new Color(204,204,204));
@@ -1841,9 +1967,9 @@ public class Main extends javax.swing.JFrame {
         bg_tipo_de_dato_crear_campo.clearSelection();
 
         bg_esLlavePrimaria_crear_campo.clearSelection();
-
-        jtf_longitud_crear_campo.setText("Ingrese la longitud");
-        jtf_longitud_crear_campo.setForeground(new Color(204,204,204));
+        
+        // Limpiar (Resetear) el jFormattedTextField
+        jtf_longitud_crear_campo.setValue(null);
     }
     
     void clean_panel_modificar_campo(){
@@ -1992,7 +2118,7 @@ public class Main extends javax.swing.JFrame {
     private javax.swing.JRadioButton jrb_tipo_string_mod_campo;
     private javax.swing.JTextArea jta_abrir_archivo;
     private javax.swing.JTextArea jta_listar_campos;
-    private javax.swing.JTextField jtf_longitud_crear_campo;
+    private javax.swing.JFormattedTextField jtf_longitud_crear_campo;
     private javax.swing.JTextField jtf_nombre_crear_campo;
     private javax.swing.JTextField jtf_nombre_nuevo_archivo;
     private javax.swing.JTextField jtf_nueva_longitud_campo;
@@ -2013,4 +2139,5 @@ public class Main extends javax.swing.JFrame {
     private boolean flag_text_estandarizacion;
     private ArrayList<Campo> campos_Archivo_Actual = new ArrayList(); 
     private File opened_file = null;
+    private int longitud_max_campo = 15;
 }
