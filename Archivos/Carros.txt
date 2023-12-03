@@ -1,8 +1,0 @@
-Campo2;double;false;13;
-Campo3;String;false;7;
-Campo4;char;false;9;
-Campo5;String;false;9;
-Campo6;String;false;12;
-Campo7;double;false;6;
-Campo11;int;false;11;
-Campo10;char;false;14;
