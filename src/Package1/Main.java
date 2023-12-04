@@ -2091,6 +2091,11 @@ public class Main extends javax.swing.JFrame {
             }
             
             boolean esLlave = jrb_nueva_EsLlave_modificar_campo.isSelected();
+            boolean val = true;
+            if(esLlave){
+                val = validar_campo_llave_y_nuevo_campo_llave();
+            }
+            
             
             String cad_longitud = jtf_nueva_longitud_modificar_campo.getText();
             if(cad_longitud.contains(" ")){
@@ -2098,7 +2103,7 @@ public class Main extends javax.swing.JFrame {
             }
             int longitud = Integer.parseInt(cad_longitud);
             
-            if(validar_nombre_de_campo_y_nombre_de_campo_a_modificar(nuevo_nombre_campo) && validar_longitud_campo(longitud, longitud_max_campo) && validar_campo_llave_y_nuevo_campo_llave()){
+            if(validar_nombre_de_campo_y_nombre_de_campo_a_modificar(nuevo_nombre_campo) && validar_longitud_campo(longitud, longitud_max_campo) && val){
                 campos_Archivo_Actual.get(selected_row_for_modify).setNombre(nuevo_nombre_campo);
                 campos_Archivo_Actual.get(selected_row_for_modify).setTipo(tipo);
                 campos_Archivo_Actual.get(selected_row_for_modify).setLongitud(longitud);
@@ -2195,7 +2200,15 @@ public class Main extends javax.swing.JFrame {
         if(selectedIndex == 0){ // Panel de introducir registro
             set_jtable_insertar_registro(); // Limpiar datos de la tabla
         } else if(selectedIndex == 1){ // Listar, modificar y borrar
-            
+            BTree arbol = new BTree();
+            try {
+                RandomAccessFile raf = new RandomAccessFile(opened_file, "rw");
+                int cantidad_de_campos = campos_Archivo_Actual.size();
+                raf.seek((47*cantidad_de_campos)+2+2+4+2);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            //JOptionPane.showMessageDialog(this, arbol.getRoot().hasSpace());
         }
     }//GEN-LAST:event_jtp_registrosStateChanged
 
@@ -2248,7 +2261,9 @@ public class Main extends javax.swing.JFrame {
                 if(availList.isEmpty()){ // No hay espacios disponibles, se agrega al final
                     escribir_registro_availist_empty(r);
                     JOptionPane.showMessageDialog(jp_introducir_registros, "Registro agregado exitosamente!");
-                    set_jtable_insertar_registro();
+                    //set_jtable_insertar_registro();
+                } else{ // El availList contine espacios disponibles
+                    
                 }
             } 
             
@@ -2336,31 +2351,30 @@ public class Main extends javax.swing.JFrame {
     void escribir_registro_availist_empty(Registro r){
         try {
             RandomAccessFile raf = new RandomAccessFile(opened_file, "rw");
-            int cantidad_de_campos = campos_Archivo_Actual.size();
-            raf.seek((cantidad_de_campos * 47)+4);
-            raf.writeInt(0);
-            raf.writeChar('\n');
-            raf.seek(raf.length());
             // Escribimos el registro
-            for (Campo c : r.getCampos()) {
-                raf.writeChar('|');
-                if(c.getTipo().equals("String")){
-                    String contenido = c.getContenido().toString();
-                    StringBuffer sb = new StringBuffer(contenido);
-                    sb.setLength(longitud_max_campo);
-                    raf.writeChars(sb.toString());
-                } else if(c.getTipo().equals("int")){
-                    int contenido = Integer.parseInt(c.getContenido().toString());
-                    raf.writeInt(contenido);
-                } else if(c.getTipo().equals("double")){
-                    double contenido = Double.parseDouble(c.getContenido().toString());
-                    raf.writeDouble(contenido);
-                } else if(c.getTipo().equals("char")){
-                    char contenido = c.getContenido().toString().charAt(0);
-                    raf.writeChar(contenido);
-                }
-            }
-            raf.writeChar('\n');
+            raf.seek(raf.length());
+            raf.writeDouble(3.14);
+//            for (Campo c : r.getCampos()) {
+//                raf.writeChar('|');
+//                if(c.getTipo().equals("String")){
+//                    String contenido = c.getContenido().toString();
+//                    StringBuffer sb = new StringBuffer(contenido);
+//                    sb.setLength(longitud_max_campo);
+//                    raf.writeChars(sb.toString());
+//                } else if(c.getTipo().equals("int")){
+//                    int contenido = Integer.parseInt(c.getContenido().toString());
+//                    raf.writeInt(contenido);
+//                } else if(c.getTipo().equals("double")){
+//                    System.out.println(c.getContenido());
+//                    double contenido = Double.parseDouble(c.getContenido().toString());
+//                    raf.writeDouble(contenido);
+//                } else if(c.getTipo().equals("char")){
+//                    char contenido = c.getContenido().toString().charAt(0);
+//                    raf.writeChar(contenido);
+//                }
+//            }
+//            raf.writeChar('|');
+//            raf.writeChar('\n');
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -2639,6 +2653,7 @@ public class Main extends javax.swing.JFrame {
     void escribir_campos() throws IOException {
         try {
             RandomAccessFile raf = new RandomAccessFile(opened_file, "rw");
+            raf.seek(0);
             for (Campo c : campos_Archivo_Actual) {
                 raf.writeChar(';');
                 StringBuffer sb = new StringBuffer(c.getNombre());
@@ -2813,7 +2828,7 @@ public class Main extends javax.swing.JFrame {
     private boolean flag_text_estandarizacion;
     private ArrayList<Campo> campos_Archivo_Actual = new ArrayList(); 
     private File opened_file = null;
-    private int longitud_max_campo = 15;
+    private int longitud_max_campo = 15; // Longitud de campo
     private String entidad_actual;
     private int selected_row_for_modify;
     private int cantidad_max_de_campos = 10;
