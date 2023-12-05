@@ -4,12 +4,12 @@ package Package1;
 public class Key {
     
     int rrn;
-    Object contenido;
+    int contenido;
 
     public Key() {
     }
 
-    public Key(int rrn, Object contenido) {
+    public Key(int rrn, int contenido) {
         this.rrn = rrn;
         this.contenido = contenido;
     }
@@ -18,7 +18,7 @@ public class Key {
         return rrn;
     }
 
-    public Object getContenido() {
+    public int getContenido() {
         return contenido;
     }
 
@@ -26,7 +26,7 @@ public class Key {
         this.rrn = rrn;
     }
 
-    public void setContenido(Object contenido) {
+    public void setContenido(int contenido) {
         this.contenido = contenido;
     }
 

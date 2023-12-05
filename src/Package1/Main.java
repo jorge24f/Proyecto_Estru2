@@ -1877,6 +1877,7 @@ public class Main extends javax.swing.JFrame {
                 jl_listar_registros.setText("Registros de " + entidad_actual);
                 opened_file = file_chooser.getSelectedFile();
                 JOptionPane.showMessageDialog(this, "Se ha abierto: " + file_chooser.getSelectedFile().getName());
+                leer_linea(4);
             } else {
                 opened_file = null;
                 jl_archivo_actual_open.setText("Archivo actual: ");
@@ -2200,15 +2201,7 @@ public class Main extends javax.swing.JFrame {
         if(selectedIndex == 0){ // Panel de introducir registro
             set_jtable_insertar_registro(); // Limpiar datos de la tabla
         } else if(selectedIndex == 1){ // Listar, modificar y borrar
-//            BTree arbol = new BTree();
-//            try {
-//                RandomAccessFile raf = new RandomAccessFile(opened_file, "rw");
-//                int cantidad_de_campos = campos_Archivo_Actual.size();
-//                raf.seek((47*cantidad_de_campos)+2+2+4+2);
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
-            //JOptionPane.showMessageDialog(this, arbol.getRoot().hasSpace());
+            // Listar Registros
         }
     }//GEN-LAST:event_jtp_registrosStateChanged
 
@@ -2317,6 +2310,54 @@ public class Main extends javax.swing.JFrame {
         });
     }
     
+    int ConseguirPosicion(Node nodo, int llave) {
+        
+        if (nodo.isLeaf()) {
+            boolean found = false;
+            for (int i = 0; i < nodo.getKeys().length; i++) {
+                if (llave == nodo.getKeys()[i].getContenido()) {
+                    found = true;
+                    return nodo.getKeys()[i].getRrn();
+                }
+            }
+            if (found == false) {
+                return -1;
+            }
+        } else {
+            for (int i = 0; i < nodo.getKeys().length; i++) {
+                if (llave == nodo.getKeys()[i].getContenido() ) {
+                    return nodo.getKeys()[i].getRrn();
+                }
+            }
+        }
+        int pos = -1;
+        for (int i = 0; i < nodo.getKeys().length; i++) {
+            if (nodo.getKeys()[i].getContenido() < llave) {
+                pos = i;
+                break;
+            }
+        }
+        if (pos == -1) {
+            pos =nodo.getKeys().length;
+        }
+        
+        return ConseguirPosicion(nodo.getChildNodes()[pos], llave);
+    }
+    
+    void leer_linea(int linea){
+        try {
+            FileReader fr = new FileReader(opened_file);
+            BufferedReader br = new BufferedReader(fr);
+            for (int i = 1; i < linea; i++) {
+                br.readLine();
+            }
+            JOptionPane.showMessageDialog(this, br.readLine());
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
     void clean_jtable_listar_registros(){
         jtable_listar_registros.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -2364,11 +2405,14 @@ public class Main extends javax.swing.JFrame {
             // Escribimos el registro
             raf.seek(raf.length());
             raf.writeChar('\n');
+            String linea = "";
+            int longitud = 0;
             for (Campo c : r.getCampos()) {
-                raf.writeChar('|');
-                StringBuffer sb = new StringBuffer(c.getContenido().toString());
-                sb.setLength(c.getLongitud());
-                raf.writeChars(sb.toString());
+                longitud += c.getLongitud();
+                linea += c.getContenido().toString();
+//                StringBuffer sb = new StringBuffer(c.getContenido().toString());
+//                sb.setLength(c.getLongitud());
+//                raf.writeChars(sb.toString());
 //                if(c.getTipo().equals("String")){
 //                    String contenido = c.getContenido().toString();
 //                    StringBuffer sb = new StringBuffer(contenido);
@@ -2385,8 +2429,13 @@ public class Main extends javax.swing.JFrame {
 //                    char contenido = c.getContenido().toString().charAt(0);
 //                    raf.writeChar(contenido);
 //                }
+                if(campos_Archivo_Actual.indexOf(c) != campos_Archivo_Actual.size()-1){
+                    linea += '|';
+                }
             }
-            raf.writeChar('|');
+            StringBuffer sb = new StringBuffer(linea);
+            sb.setLength(longitud + r.getCampos().size()+1);
+            raf.writeChars(sb.toString());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -2616,6 +2665,7 @@ public class Main extends javax.swing.JFrame {
         }
     }
     
+    
     String cortar_string(String cad){
         String number = "";
         number += cad.charAt(0);
@@ -2669,15 +2719,21 @@ public class Main extends javax.swing.JFrame {
             fw = new FileWriter(opened_file, false);
             bw = new BufferedWriter(fw);
             for (Campo c : campos_Archivo_Actual) {
-                bw.write(c.getNombre() + ";");
-                bw.write(c.getTipo() + ";");
-                bw.write(c.isEsLlave() + ";");
-                bw.write(c.getLongitud() + ";");
+                String linea = "";
+                linea += c.getNombre() + ";";
+                linea += c.getTipo() + ";";
+                linea += c.isEsLlave() + ";";
+                linea += c.getLongitud() + ";";
+
                 if(campos_Archivo_Actual.indexOf(c) == campos_Archivo_Actual.size()-1){
-                    bw.write("v;"); // Indica el final de los campos
+                    linea += "v;"; // Indica el final de los campos
                 } else {
-                    bw.write("f;");
+                    linea +="f;";
                 }
+                
+                StringBuffer sb = new StringBuffer(linea); 
+                sb.setLength(50);              
+                bw.write(sb.toString());
                 bw.newLine();
             }
             
