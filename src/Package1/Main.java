@@ -2200,14 +2200,14 @@ public class Main extends javax.swing.JFrame {
         if(selectedIndex == 0){ // Panel de introducir registro
             set_jtable_insertar_registro(); // Limpiar datos de la tabla
         } else if(selectedIndex == 1){ // Listar, modificar y borrar
-            BTree arbol = new BTree();
-            try {
-                RandomAccessFile raf = new RandomAccessFile(opened_file, "rw");
-                int cantidad_de_campos = campos_Archivo_Actual.size();
-                raf.seek((47*cantidad_de_campos)+2+2+4+2);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+//            BTree arbol = new BTree();
+//            try {
+//                RandomAccessFile raf = new RandomAccessFile(opened_file, "rw");
+//                int cantidad_de_campos = campos_Archivo_Actual.size();
+//                raf.seek((47*cantidad_de_campos)+2+2+4+2);
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
             //JOptionPane.showMessageDialog(this, arbol.getRoot().hasSpace());
         }
     }//GEN-LAST:event_jtp_registrosStateChanged
@@ -2254,18 +2254,31 @@ public class Main extends javax.swing.JFrame {
                 }
             }
             
-            if(validacionInt && validacionChar && validacionDouble){ // Entramos solo si los tipos de datos concuerdan con lo ingresado por el usuario
+            // Aqui validamos la longitud de cada campo
+            boolean validacion_longitud = true;
+            for (int i = 0; i < total_de_campos; i++) {
+                String str = jtable_insertar_registro.getValueAt(0, i).toString();
+                if(campos_Archivo_Actual.get(i).getLongitud() < str.length()){
+                    validacion_longitud = false;
+                    JOptionPane.showMessageDialog(jp_introducir_registros, campos_Archivo_Actual.get(i).getNombre() + " debe tener longitud maxima de " 
+                            + campos_Archivo_Actual.get(i).getLongitud() +"!");
+                    i = total_de_campos;
+                }
+            }
+            
+            
+            if(validacionInt && validacionChar && validacionDouble && validacion_longitud){ // Entramos solo si los tipos de datos concuerdan con lo ingresado por el usuario
                 for (int i = 0; i < total_de_campos; i++) {
                     r.getCampos().get(i).setContenido(jtable_insertar_registro.getValueAt(0, i)); // Llenamos el contenido de cada campo del registro
                 }
                 if(availList.isEmpty()){ // No hay espacios disponibles, se agrega al final
                     escribir_registro_availist_empty(r);
                     JOptionPane.showMessageDialog(jp_introducir_registros, "Registro agregado exitosamente!");
-                    //set_jtable_insertar_registro();
+                    set_jtable_insertar_registro();
                 } else{ // El availList contine espacios disponibles
                     
                 }
-            } 
+            }
             
         } else {
             JOptionPane.showMessageDialog(jp_introducir_registros, "Debe llenar todos los campos!");
@@ -2342,9 +2355,6 @@ public class Main extends javax.swing.JFrame {
             for (int i = 0; i <size; i++) {
                 columnNames[i] = campos_Archivo_Actual.get(i).getNombre();
             }
-            
-            
-            
         }
     }
     
@@ -2353,9 +2363,12 @@ public class Main extends javax.swing.JFrame {
             RandomAccessFile raf = new RandomAccessFile(opened_file, "rw");
             // Escribimos el registro
             raf.seek(raf.length());
-            raf.writeDouble(3.14);
-//            for (Campo c : r.getCampos()) {
-//                raf.writeChar('|');
+            raf.writeChar('\n');
+            for (Campo c : r.getCampos()) {
+                raf.writeChar('|');
+                StringBuffer sb = new StringBuffer(c.getContenido().toString());
+                sb.setLength(c.getLongitud());
+                raf.writeChars(sb.toString());
 //                if(c.getTipo().equals("String")){
 //                    String contenido = c.getContenido().toString();
 //                    StringBuffer sb = new StringBuffer(contenido);
@@ -2372,9 +2385,8 @@ public class Main extends javax.swing.JFrame {
 //                    char contenido = c.getContenido().toString().charAt(0);
 //                    raf.writeChar(contenido);
 //                }
-//            }
-//            raf.writeChar('|');
-//            raf.writeChar('\n');
+            }
+            raf.writeChar('|');
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -2824,7 +2836,7 @@ public class Main extends javax.swing.JFrame {
     private boolean flag_text_estandarizacion;
     private ArrayList<Campo> campos_Archivo_Actual = new ArrayList(); 
     private File opened_file = null;
-    private int longitud_max_campo = 15; // Longitud de campo
+    private int longitud_max_campo = 30; // Longitud de campo
     private String entidad_actual;
     private int selected_row_for_modify;
     private int cantidad_max_de_campos = 10;
