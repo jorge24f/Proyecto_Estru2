@@ -1877,7 +1877,7 @@ public class Main extends javax.swing.JFrame {
                 jl_listar_registros.setText("Registros de " + entidad_actual);
                 opened_file = file_chooser.getSelectedFile();
                 JOptionPane.showMessageDialog(this, "Se ha abierto: " + file_chooser.getSelectedFile().getName());
-                leer_linea(4);
+                //leer_registro(2);
             } else {
                 opened_file = null;
                 jl_archivo_actual_open.setText("Archivo actual: ");
@@ -2031,7 +2031,6 @@ public class Main extends javax.swing.JFrame {
         String len = "";
         len += c.getLongitud();
         jtf_nueva_longitud_modificar_campo.setText(len);
-        
         
         // Mostrar el jdialog
         jd_modificar_campo.pack();
@@ -2344,18 +2343,33 @@ public class Main extends javax.swing.JFrame {
         return ConseguirPosicion(nodo.getChildNodes()[pos], llave);
     }
     
-    void leer_linea(int linea){
+    void leer_registro(int num_de_registro){
         try {
-            FileReader fr = new FileReader(opened_file);
-            BufferedReader br = new BufferedReader(fr);
-            for (int i = 1; i < linea; i++) {
-                br.readLine();
+            RandomAccessFile raf = new RandomAccessFile(opened_file, "rw");
+            cargar_campos();
+            int cantidad_de_campos = campos_Archivo_Actual.size();
+            int longitud = 0;
+            for (Campo c : campos_Archivo_Actual) {
+                longitud += c.getLongitud();
             }
-            JOptionPane.showMessageDialog(this, br.readLine());
-            
+            int longitud_registro = ((longitud + campos_Archivo_Actual.size()-1)*2)+2;
+            raf.seek((cantidad_de_campos*50)+(cantidad_de_campos*2)+2+(longitud_registro * num_de_registro));
+            String linea = raf.readLine();
+            JOptionPane.showMessageDialog(this, linea);
         } catch (Exception e) {
             e.printStackTrace();
         }
+//        try {
+//            FileReader fr = new FileReader(opened_file);
+//            BufferedReader br = new BufferedReader(fr);
+//            for (int i = 1; i < linea; i++) {
+//                br.readLine();
+//            }
+//            JOptionPane.showMessageDialog(this, br.readLine());
+//            
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
     }
     
     void clean_jtable_listar_registros(){
@@ -2410,31 +2424,12 @@ public class Main extends javax.swing.JFrame {
             for (Campo c : r.getCampos()) {
                 longitud += c.getLongitud();
                 linea += c.getContenido().toString();
-//                StringBuffer sb = new StringBuffer(c.getContenido().toString());
-//                sb.setLength(c.getLongitud());
-//                raf.writeChars(sb.toString());
-//                if(c.getTipo().equals("String")){
-//                    String contenido = c.getContenido().toString();
-//                    StringBuffer sb = new StringBuffer(contenido);
-//                    sb.setLength(longitud_max_campo);
-//                    raf.writeChars(sb.toString());
-//                } else if(c.getTipo().equals("int")){
-//                    int contenido = Integer.parseInt(c.getContenido().toString());
-//                    raf.writeInt(contenido);
-//                } else if(c.getTipo().equals("double")){
-//                    System.out.println(c.getContenido());
-//                    double contenido = Double.parseDouble(c.getContenido().toString());
-//                    raf.writeDouble(contenido);
-//                } else if(c.getTipo().equals("char")){
-//                    char contenido = c.getContenido().toString().charAt(0);
-//                    raf.writeChar(contenido);
-//                }
                 if(campos_Archivo_Actual.indexOf(c) != campos_Archivo_Actual.size()-1){
                     linea += '|';
                 }
             }
             StringBuffer sb = new StringBuffer(linea);
-            sb.setLength(longitud + r.getCampos().size()+1);
+            sb.setLength(longitud + r.getCampos().size()-1);
             raf.writeChars(sb.toString());
         } catch (Exception e) {
             e.printStackTrace();
@@ -2730,7 +2725,6 @@ public class Main extends javax.swing.JFrame {
                 } else {
                     linea +="f;";
                 }
-                
                 StringBuffer sb = new StringBuffer(linea); 
                 sb.setLength(50);              
                 bw.write(sb.toString());
