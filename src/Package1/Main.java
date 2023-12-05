@@ -1546,6 +1546,41 @@ public class Main extends javax.swing.JFrame {
            jl_text_estandarizacion.setForeground(new Color(204,204,204));
            jp_sideBar_Estandarizacion.setBackground(new Color(23,35,54));
            jp_mini_detalle_Estandarizacion.setBackground(new Color(23,35,54));
+       } else if(leer_registro(0) != null){
+           JOptionPane.showMessageDialog(jp_crear_campos, "Debe eliminar todos los registros para ingresar a Campos!");
+           set_jtable_insertar_registro();
+           jtp_archivo.setVisible(false);
+           jtp_campos.setVisible(false);
+           jtp_registros.setVisible(true);
+           jtp_indices.setVisible(false);
+           jtp_estandarizacion.setVisible(false);
+           jtp_registros.setSelectedIndex(0);
+
+           flag_text_archivo = false;
+           flag_text_campos = false;
+           flag_text_registros = true;
+           flag_text_indices = false;
+           flag_text_estandarizacion = false;
+
+           jl_text_registros.setForeground(Color.WHITE);
+           jp_sideBar_Registros.setBackground(new Color(41,57,80));
+           jp_mini_detalle_Registros.setBackground(new Color(240,240,240));
+
+           jl_text_archivo.setForeground(new Color(204,204,204));
+           jp_sideBar_Archivo.setBackground(new Color(23,35,54));
+           jp_mini_detalle_Archivo.setBackground(new Color(23,35,54));
+
+           jl_text_campos.setForeground(new Color(204,204,204));
+           jp_sideBar_Campos.setBackground(new Color(23,35,54));
+           jp_mini_detalle_Campos.setBackground(new Color(23,35,54));
+
+           jl_text_indices.setForeground(new Color(204,204,204));
+           jp_sideBar_Indices.setBackground(new Color(23,35,54));
+           jp_mini_detalle_Indices.setBackground(new Color(23,35,54));
+
+           jl_text_estandarizacion.setForeground(new Color(204,204,204));
+           jp_sideBar_Estandarizacion.setBackground(new Color(23,35,54));
+           jp_mini_detalle_Estandarizacion.setBackground(new Color(23,35,54));
        }
     }//GEN-LAST:event_jp_sideBar_CamposMouseClicked
 
@@ -1877,7 +1912,8 @@ public class Main extends javax.swing.JFrame {
                 jl_listar_registros.setText("Registros de " + entidad_actual);
                 opened_file = file_chooser.getSelectedFile();
                 JOptionPane.showMessageDialog(this, "Se ha abierto: " + file_chooser.getSelectedFile().getName());
-                //leer_registro(2);
+                //System.out.println(leer_registro(0));
+                
             } else {
                 opened_file = null;
                 jl_archivo_actual_open.setText("Archivo actual: ");
@@ -2267,7 +2303,7 @@ public class Main extends javax.swing.JFrame {
                     escribir_registro_availist_empty(r);
                     JOptionPane.showMessageDialog(jp_introducir_registros, "Registro agregado exitosamente!");
                     set_jtable_insertar_registro();
-                } else{ // El availList contine espacios disponibles
+                } else{ // El availList contiene espacios disponibles
                     
                 }
             }
@@ -2309,6 +2345,10 @@ public class Main extends javax.swing.JFrame {
         });
     }
     
+    void escribir_registro_with_availList(Registro r){
+        
+    }
+    
     int ConseguirPosicion(Node nodo, int llave) {
         
         if (nodo.isLeaf()) {
@@ -2343,7 +2383,8 @@ public class Main extends javax.swing.JFrame {
         return ConseguirPosicion(nodo.getChildNodes()[pos], llave);
     }
     
-    void leer_registro(int num_de_registro){
+    String leer_registro(int num_de_registro){
+        String linea = "";
         try {
             RandomAccessFile raf = new RandomAccessFile(opened_file, "rw");
             cargar_campos();
@@ -2352,24 +2393,15 @@ public class Main extends javax.swing.JFrame {
             for (Campo c : campos_Archivo_Actual) {
                 longitud += c.getLongitud();
             }
+            // Longitud de un Registro = suma de longitudes de cada campo + espacio que ocupan los delimitadores + un salto de linea 
             int longitud_registro = ((longitud + campos_Archivo_Actual.size()-1)*2)+2;
             raf.seek((cantidad_de_campos*50)+(cantidad_de_campos*2)+2+(longitud_registro * num_de_registro));
-            String linea = raf.readLine();
-            JOptionPane.showMessageDialog(this, linea);
+            linea = raf.readLine();
+            //JOptionPane.showMessageDialog(this, linea);
         } catch (Exception e) {
             e.printStackTrace();
         }
-//        try {
-//            FileReader fr = new FileReader(opened_file);
-//            BufferedReader br = new BufferedReader(fr);
-//            for (int i = 1; i < linea; i++) {
-//                br.readLine();
-//            }
-//            JOptionPane.showMessageDialog(this, br.readLine());
-//            
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
+        return linea;
     }
     
     void clean_jtable_listar_registros(){
