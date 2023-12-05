@@ -2651,57 +2651,53 @@ public class Main extends javax.swing.JFrame {
     }
     
     void escribir_campos() throws IOException {
+        FileWriter fw = null;
+        BufferedWriter bw = null;
         try {
-            RandomAccessFile raf = new RandomAccessFile(opened_file, "rw");
-            raf.seek(0);
+            fw = new FileWriter(opened_file, false);
+            bw = new BufferedWriter(fw);
             for (Campo c : campos_Archivo_Actual) {
-                raf.writeChar(';');
-                StringBuffer sb = new StringBuffer(c.getNombre());
-                sb.setLength(longitud_max_nombre_campo); // 20 bytes
-                raf.writeChars(sb.toString());
-                StringBuffer sb2 = new StringBuffer(c.getTipo());
-                sb2.setLength(longitud_max_tipo_campo); // 20 bytes
-                raf.writeChars(sb2.toString());
-                raf.writeInt(c.getLongitud()); // 4 bytes
-                raf.writeBoolean(c.isEsLlave()); // 1 byte
-                if(c == campos_Archivo_Actual.get(campos_Archivo_Actual.size()-1)){
-                    raf.writeChar('/');
-                    raf.writeChar('\n');
+                bw.write(c.getNombre() + ";");
+                bw.write(c.getTipo() + ";");
+                bw.write(c.isEsLlave() + ";");
+                bw.write(c.getLongitud() + ";");
+                if(campos_Archivo_Actual.indexOf(c) == campos_Archivo_Actual.size()-1){
+                    bw.write("v;"); // Indica el final de los campos
+                } else {
+                    bw.write("f;");
                 }
-                // Total = 45 bytes = 1 campo
+                bw.newLine();
             }
             
+            bw.flush();
         } catch (Exception e) {
             e.printStackTrace();
         }
+        bw.close();
+        fw.close();
     }
     
     void cargar_campos(){
+        Scanner sc = null;
+        campos_Archivo_Actual = new ArrayList();
         if(opened_file.exists()){
             try {
-                RandomAccessFile raf = new RandomAccessFile(opened_file, "rw");
-                if(raf.length() > 0){
-                    campos_Archivo_Actual = new ArrayList();
-                    raf.seek(0);
-                    while(raf.readChar() != '/'){
-                        String nombre_campo = "";
-                        for (int i = 0; i < longitud_max_nombre_campo; i++) {
-                            nombre_campo += raf.readChar();
-                        }
-                        nombre_campo = nombre_campo.trim();
-                        String tipo = "";
-                        for (int i = 0; i < longitud_max_tipo_campo; i++) {
-                            tipo += raf.readChar();
-                        }
-                        tipo = tipo.trim();
-                        int longitud = raf.readInt();
-                        boolean esLlave = raf.readBoolean();
-                        campos_Archivo_Actual.add(new Campo(nombre_campo, tipo, longitud, esLlave));
-                    }
+                sc = new Scanner(opened_file);
+                sc.useDelimiter(";");
+                String fin = "";
+                while(sc.hasNext() && !(fin.equals("v"))){
+                    String nombreCampo = sc.next();
+                    String tipo = sc.next();
+                    boolean esLlave = sc.nextBoolean();
+                    int longitud = sc.nextInt();
+                    fin = sc.next();
+                    campos_Archivo_Actual.add(new Campo(nombreCampo, tipo, longitud, esLlave));
+                    sc.nextLine();
                 }
             } catch (Exception e) {
-                    e.printStackTrace();
+                e.printStackTrace();
             }
+            sc.close();
         }
     }
     
