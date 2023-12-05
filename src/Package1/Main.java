@@ -1912,8 +1912,8 @@ public class Main extends javax.swing.JFrame {
                 jl_listar_registros.setText("Registros de " + entidad_actual);
                 opened_file = file_chooser.getSelectedFile();
                 JOptionPane.showMessageDialog(this, "Se ha abierto: " + file_chooser.getSelectedFile().getName());
-                //System.out.println(leer_registro(0));
-                
+                //System.out.println(leer_registro(1));
+                //System.out.println("Cantidad de registros: " + cantidad_de_registros());
             } else {
                 opened_file = null;
                 jl_archivo_actual_open.setText("Archivo actual: ");
@@ -2383,21 +2383,43 @@ public class Main extends javax.swing.JFrame {
         return ConseguirPosicion(nodo.getChildNodes()[pos], llave);
     }
     
+    int cantidad_de_registros(){
+        if(leer_registro(0) != null){
+            try {
+                RandomAccessFile raf = new RandomAccessFile(opened_file, "rw");
+                cargar_campos();
+                int longitud_registro = 0;
+                int longitud_de_campos = 0;
+                for (Campo c : campos_Archivo_Actual) {
+                    longitud_de_campos += c.getLongitud();
+                }
+
+                // Posicion Primer registro = ((campos_Archivo_Actual.size()+1)
+                longitud_registro += ((longitud_de_campos + (campos_Archivo_Actual.size()-1))*2)+2;
+                return (int) ((raf.length()-((campos_Archivo_Actual.size()+1)*52))/longitud_registro);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return 0;
+    }
+    
     String leer_registro(int num_de_registro){
         String linea = "";
         try {
             RandomAccessFile raf = new RandomAccessFile(opened_file, "rw");
             cargar_campos();
-            int cantidad_de_campos = campos_Archivo_Actual.size();
-            int longitud = 0;
+            int longitud_registro = 0;
+            int longitud_de_campos = 0;
             for (Campo c : campos_Archivo_Actual) {
-                longitud += c.getLongitud();
+                longitud_de_campos += c.getLongitud();
             }
-            // Longitud de un Registro = suma de longitudes de cada campo + espacio que ocupan los delimitadores + un salto de linea 
-            int longitud_registro = ((longitud + campos_Archivo_Actual.size()-1)*2)+2;
-            raf.seek((cantidad_de_campos*50)+(cantidad_de_campos*2)+2+(longitud_registro * num_de_registro));
+            
+            // Posicion Primer registro = ((campos_Archivo_Actual.size()+1)*52)
+            longitud_registro += ((longitud_de_campos + (campos_Archivo_Actual.size()-1))*2)+2; // Valor de cada campo + valor de las pipes + salto de linea
+            int posicion = (((campos_Archivo_Actual.size()+1)*52)+(longitud_registro*num_de_registro)); 
+            raf.seek(posicion);
             linea = raf.readLine();
-            //JOptionPane.showMessageDialog(this, linea);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -2445,12 +2467,24 @@ public class Main extends javax.swing.JFrame {
         }
     }
     
+   int get_pos_primer_registro(){
+        cargar_campos();
+        int cantidad_campos = campos_Archivo_Actual.size();
+        int longitud_metadata = cantidad_campos*52; //Incluyendo el salto de linea por campo
+        for (Campo c : campos_Archivo_Actual) {
+            longitud_metadata += c.getLongitud();
+        }
+        //int longitud_registro = (longitud_metadata + campos_Archivo_Actual.size()-1)*2);
+       return 0;
+   
+   } 
+    
     void escribir_registro_availist_empty(Registro r){
         try {
             RandomAccessFile raf = new RandomAccessFile(opened_file, "rw");
             // Escribimos el registro
             raf.seek(raf.length());
-            raf.writeChar('\n');
+            //raf.writeChar('\n');
             String linea = "";
             int longitud = 0;
             for (Campo c : r.getCampos()) {
@@ -2463,6 +2497,7 @@ public class Main extends javax.swing.JFrame {
             StringBuffer sb = new StringBuffer(linea);
             sb.setLength(longitud + r.getCampos().size()-1);
             raf.writeChars(sb.toString());
+            raf.writeChar('\n');
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -2762,7 +2797,11 @@ public class Main extends javax.swing.JFrame {
                 bw.write(sb.toString());
                 bw.newLine();
             }
-            
+            String linea2 = "";
+            StringBuffer sb2 = new StringBuffer(linea2);
+            sb2.setLength(50);
+            bw.write(sb2.toString());
+            bw.newLine();
             bw.flush();
         } catch (Exception e) {
             e.printStackTrace();
