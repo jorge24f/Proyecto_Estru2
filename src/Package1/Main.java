@@ -2472,6 +2472,14 @@ public class Main extends javax.swing.JFrame {
             int posicion = (((campos_Archivo_Actual.size()+1)*52)+(longitud_registro*num_de_registro)); 
             raf.seek(posicion);
             linea = raf.readLine();
+            char caracter;
+            if(linea != null){
+                raf.seek(posicion);
+                while((caracter = raf.readChar()) != '\n'){
+                    linea2 += caracter;
+                }
+                return linea2;
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
