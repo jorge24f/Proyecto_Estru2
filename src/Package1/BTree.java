@@ -132,31 +132,33 @@ public class BTree implements Serializable{
 
     // Helper method to insert a key into a leaf node
     private void insertarEnHoja(Key key, Node nodo) {
-        // Find the index to insert the key
-        //int index = encontrarPosHijo(key, nodo);
 
-        // Shift the keys to make space for the new key
-        if (nodo.getKeys()[0] == null) {
-            nodo.getKeys()[0] = key;
-        } else {
-            for (int i = 0; i > nodo.getKeys().length; i++) {
-              if (nodo.getKeys()[i] != null && nodo.getKeys()[i].getContenido() < key.getContenido()) {
-                  if (nodo.getKeys()[i + 1] == null) {
-                    nodo.getKeys()[i + 1] = key;
-                    } else {
-                      for (int j = nodo.getKeys().length - 1; j > i + 1; j--) {
-                          nodo.getKeys()[j] = nodo.getKeys()[j - 1];
-                        }
-                      nodo.getKeys()[i + 1] = key;
+        for (int i = 0; i < nodo.getKeys().length; i++) {
+            if (nodo.getKeys()[i] == null) {
+                nodo.getKeys()[i] = key;
+                break;
+            }
+        }
+        sortKeys(nodo.getKeys());
+    }
+
+    private static void sortKeys(Key[] arr) {
+        int n = arr.length;
+
+        if (arr[1] != null) {
+            for (int i = 0; i < n - 1; i++) {
+                for (int j = 0; j < n - 1 - i; j++) {
+                    if (arr[j] != null && arr[j + 1] != null &&arr[j].getContenido() > arr[j + 1].getContenido()) {
+                        // Swap arr[j] and arr[j + 1]
+                        Key temp = arr[j];
+                        arr[j] = arr[j + 1];
+                        arr[j + 1] = temp;
                     }
                 }
             }
         }
-
-        // Insert the key into the appropriate position
-        // nodo.getKeys()[index] = key;
     }
-
+    
     // Helper method to find the index of the child to insert the key
     private int encontrarPosHijo(Key key, Node nodo) {
         int index = 0;

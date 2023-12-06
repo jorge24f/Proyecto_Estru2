@@ -1576,7 +1576,7 @@ public class Main extends javax.swing.JFrame {
            jl_text_estandarizacion.setForeground(new Color(204,204,204));
            jp_sideBar_Estandarizacion.setBackground(new Color(23,35,54));
            jp_mini_detalle_Estandarizacion.setBackground(new Color(23,35,54));
-       } else if(leer_registro(0) != null){
+       } else if(cantidad_de_registros() > 0){
            JOptionPane.showMessageDialog(jp_crear_campos, "Debe eliminar todos los registros para ingresar a Campos!");
            set_jtable_insertar_registro();
            jtp_archivo.setVisible(false);
@@ -2458,6 +2458,7 @@ public class Main extends javax.swing.JFrame {
     
     String leer_registro(int num_de_registro){
         String linea = "";
+        String linea2 = "";
         try {
             RandomAccessFile raf = new RandomAccessFile(opened_file, "rw");
             cargar_campos();
@@ -2470,11 +2471,7 @@ public class Main extends javax.swing.JFrame {
             longitud_registro += ((longitud_de_campos + (campos_Archivo_Actual.size()-1))*2)+2; // Valor de cada campo + valor de las pipes + salto de linea
             int posicion = (((campos_Archivo_Actual.size()+1)*52)+(longitud_registro*num_de_registro)); 
             raf.seek(posicion);
-            //linea = raf.readLine();
-            char caracter;
-            while((caracter = raf.readChar()) != '\n'){
-                linea += caracter;
-            }
+            linea = raf.readLine();
         } catch (Exception e) {
             e.printStackTrace();
         }
