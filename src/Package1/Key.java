@@ -1,7 +1,9 @@
 
 package Package1;
 
-public class Key {
+import java.io.Serializable;
+
+public class Key implements Serializable{
     
     int rrn;
     int contenido;

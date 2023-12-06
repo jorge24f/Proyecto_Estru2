@@ -1862,6 +1862,9 @@ public class Main extends javax.swing.JFrame {
                 File archivo = new File(file_chooser.getSelectedFile()+"\\"+filename);
                 try {
                     if(archivo.createNewFile()){
+                        //Crear arbol
+                        arbol.guardarBTree("./Archivos/"+jtf_nombre_nuevo_archivo.getText()+".bin");
+                        System.out.println(arbol);
                         JOptionPane.showMessageDialog(jp_new_file, "Archivo creado exitosamente!");
                        
                         abrev_entidad_actual(filename);
@@ -1912,8 +1915,8 @@ public class Main extends javax.swing.JFrame {
                 jl_listar_registros.setText("Registros de " + entidad_actual);
                 opened_file = file_chooser.getSelectedFile();
                 JOptionPane.showMessageDialog(this, "Se ha abierto: " + file_chooser.getSelectedFile().getName());
-                //System.out.println(leer_registro(1));
-                //System.out.println("Cantidad de registros: " + cantidad_de_registros());
+                System.out.println(leer_registro(1));
+                System.out.println("Cantidad de registros: " + cantidad_de_registros());
             } else {
                 opened_file = null;
                 jl_archivo_actual_open.setText("Archivo actual: ");
@@ -2300,6 +2303,17 @@ public class Main extends javax.swing.JFrame {
                     r.getCampos().get(i).setContenido(jtable_insertar_registro.getValueAt(0, i)); // Llenamos el contenido de cada campo del registro
                 }
                 if(availList.isEmpty()){ // No hay espacios disponibles, se agrega al final
+                    int contenido = 0;
+                    for (Campo c : campos_Archivo_Actual) {
+                        if(c.isEsLlave()){
+                            contenido =  Integer.parseInt(c.getContenido().toString());
+                        }
+                    }
+                    //System.out.println(contenido);
+                    Key llave = new Key(cantidad_de_registros(), contenido);
+                    //arbol.insertarLlave(llave, arbol.getRoot());
+                    //System.out.println(arbol);
+                    //System.out.println(llave);
                     escribir_registro_availist_empty(r);
                     JOptionPane.showMessageDialog(jp_introducir_registros, "Registro agregado exitosamente!");
                     set_jtable_insertar_registro();
@@ -2495,7 +2509,7 @@ public class Main extends javax.swing.JFrame {
                 }
             }
             StringBuffer sb = new StringBuffer(linea);
-            sb.setLength(longitud + r.getCampos().size()-1);
+            sb.setLength(longitud + r.getCampos().size());
             raf.writeChars(sb.toString());
             raf.writeChar('\n');
         } catch (Exception e) {
@@ -2964,5 +2978,6 @@ public class Main extends javax.swing.JFrame {
     private LinkedList<Integer> availList = new LinkedList();
     private int longitud_max_nombre_campo = 10;
     private int longitud_max_tipo_campo = 10;
+    private BTree arbol = new BTree();
     //private Registro registro;
 }

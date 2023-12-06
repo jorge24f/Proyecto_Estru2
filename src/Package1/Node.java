@@ -1,14 +1,16 @@
 
 package Package1;
 
+import java.io.Serializable;
 import java.util.Arrays;
 
-public class Node {
+public class Node implements Serializable{
     // T = 6
     private int numKeys;
     private boolean leaf;
     private Key[] keys = new Key[5];
     private Node[] childNodes = new Node[6];
+     private Node parent;
 
     public Node() {
     }
@@ -50,6 +52,14 @@ public class Node {
         this.childNodes = childNodes;
     }
 
+    public Node getParent() {
+        return parent;
+    }
+
+    public void setParent(Node parent) {
+        this.parent = parent;
+    }
+    
     public boolean isEmpty(){ // Verifica si el arreglo de llaves no contine ninguna llave
         if(keys[0] == null){
             return true;
