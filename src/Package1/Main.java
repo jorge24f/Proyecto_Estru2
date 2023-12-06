@@ -112,6 +112,9 @@ public class Main extends javax.swing.JFrame {
         jLabel13 = new javax.swing.JLabel();
         bg_modificar_tipo_de_dato_campo = new javax.swing.ButtonGroup();
         bg_modificar_esLlave = new javax.swing.ButtonGroup();
+        jPopup_registros = new javax.swing.JPopupMenu();
+        jmi_modificar_registro = new javax.swing.JMenuItem();
+        jmi_borrar_registro = new javax.swing.JMenuItem();
         jp_header_home = new javax.swing.JPanel();
         jp_exit_home = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
@@ -187,6 +190,7 @@ public class Main extends javax.swing.JFrame {
         jPanel7 = new javax.swing.JPanel();
         jl_listar_registros = new javax.swing.JLabel();
         jp_buscar_registros = new javax.swing.JPanel();
+        jp_cruzar_archivos = new javax.swing.JPanel();
         jtp_indices = new javax.swing.JTabbedPane();
         jp_crear_indices = new javax.swing.JPanel();
         jp_re_indexar_archivos = new javax.swing.JPanel();
@@ -443,6 +447,14 @@ public class Main extends javax.swing.JFrame {
         );
 
         jd_modificar_campo.getContentPane().add(jPanel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 127, 400, 380));
+
+        jmi_modificar_registro.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/Modify16px.png"))); // NOI18N
+        jmi_modificar_registro.setText("Modificar Registro");
+        jPopup_registros.add(jmi_modificar_registro);
+
+        jmi_borrar_registro.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/eliminar16px.png"))); // NOI18N
+        jmi_borrar_registro.setText("Borrar Registro");
+        jPopup_registros.add(jmi_borrar_registro);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -1284,6 +1296,11 @@ public class Main extends javax.swing.JFrame {
         jtable_listar_registros.setSelectionBackground(new java.awt.Color(232, 57, 95));
         jtable_listar_registros.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jtable_listar_registros.getTableHeader().setReorderingAllowed(false);
+        jtable_listar_registros.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jtable_listar_registrosMouseClicked(evt);
+            }
+        });
         jScrollPane3.setViewportView(jtable_listar_registros);
         if (jtable_listar_registros.getColumnModel().getColumnCount() > 0) {
             jtable_listar_registros.getColumnModel().getColumn(0).setResizable(false);
@@ -1344,6 +1361,19 @@ public class Main extends javax.swing.JFrame {
         );
 
         jtp_registros.addTab("Buscar", jp_buscar_registros);
+
+        javax.swing.GroupLayout jp_cruzar_archivosLayout = new javax.swing.GroupLayout(jp_cruzar_archivos);
+        jp_cruzar_archivos.setLayout(jp_cruzar_archivosLayout);
+        jp_cruzar_archivosLayout.setHorizontalGroup(
+            jp_cruzar_archivosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 845, Short.MAX_VALUE)
+        );
+        jp_cruzar_archivosLayout.setVerticalGroup(
+            jp_cruzar_archivosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 542, Short.MAX_VALUE)
+        );
+
+        jtp_registros.addTab("Cruzar Archivos", jp_cruzar_archivos);
 
         jp_home.add(jtp_registros, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 100, 850, 570));
 
@@ -1915,8 +1945,8 @@ public class Main extends javax.swing.JFrame {
                 jl_listar_registros.setText("Registros de " + entidad_actual);
                 opened_file = file_chooser.getSelectedFile();
                 JOptionPane.showMessageDialog(this, "Se ha abierto: " + file_chooser.getSelectedFile().getName());
-                System.out.println(leer_registro(1));
-                System.out.println("Cantidad de registros: " + cantidad_de_registros());
+                //System.out.println(leer_registro(0));
+                //System.out.println("Cantidad de registros: " + cantidad_de_registros());
             } else {
                 opened_file = null;
                 jl_archivo_actual_open.setText("Archivo actual: ");
@@ -2240,6 +2270,7 @@ public class Main extends javax.swing.JFrame {
             set_jtable_insertar_registro(); // Limpiar datos de la tabla
         } else if(selectedIndex == 1){ // Listar, modificar y borrar
             // Listar Registros
+            set_jtable_listar_registros();
         }
     }//GEN-LAST:event_jtp_registrosStateChanged
 
@@ -2327,6 +2358,14 @@ public class Main extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jb_introducir_registroMouseClicked
 
+    private void jtable_listar_registrosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jtable_listar_registrosMouseClicked
+        if(jtable_listar_registros.getSelectedRow() >= 0){
+            if(evt.isMetaDown()){
+                jPopup_registros.show(evt.getComponent(), evt.getX(), evt.getY());
+            }
+        }
+    }//GEN-LAST:event_jtable_listar_registrosMouseClicked
+
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -2407,7 +2446,6 @@ public class Main extends javax.swing.JFrame {
                 for (Campo c : campos_Archivo_Actual) {
                     longitud_de_campos += c.getLongitud();
                 }
-
                 // Posicion Primer registro = ((campos_Archivo_Actual.size()+1)
                 longitud_registro += ((longitud_de_campos + (campos_Archivo_Actual.size()-1))*2)+2;
                 return (int) ((raf.length()-((campos_Archivo_Actual.size()+1)*52))/longitud_registro);
@@ -2428,12 +2466,15 @@ public class Main extends javax.swing.JFrame {
             for (Campo c : campos_Archivo_Actual) {
                 longitud_de_campos += c.getLongitud();
             }
-            
             // Posicion Primer registro = ((campos_Archivo_Actual.size()+1)*52)
             longitud_registro += ((longitud_de_campos + (campos_Archivo_Actual.size()-1))*2)+2; // Valor de cada campo + valor de las pipes + salto de linea
             int posicion = (((campos_Archivo_Actual.size()+1)*52)+(longitud_registro*num_de_registro)); 
             raf.seek(posicion);
-            linea = raf.readLine();
+            //linea = raf.readLine();
+            char caracter;
+            while((caracter = raf.readChar()) != '\n'){
+                linea += caracter;
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -2478,7 +2519,36 @@ public class Main extends javax.swing.JFrame {
             for (int i = 0; i <size; i++) {
                 columnNames[i] = campos_Archivo_Actual.get(i).getNombre();
             }
-        }
+            
+            // Registros
+            Object[][] data = new Object[cantidad_de_registros()][size];
+            for (int i = 0; i < cantidad_de_registros(); i++) {
+                String linea = leer_registro(i);
+                String[] campos = linea.split("\\|");
+                for (int j = 0; j < size; j++) {
+                    data[i][j] = campos[j].trim();
+                }
+            }
+            
+            jtable_listar_registros.setModel(new javax.swing.table.DefaultTableModel(data, columnNames){
+                @Override
+                public boolean isCellEditable(int row, int column){
+                    return false;
+                }
+            });
+            jtable_listar_registros.setIntercellSpacing(new java.awt.Dimension(0, 0));
+            jtable_listar_registros.setRowHeight(25);
+            jtable_listar_registros.setSelectionBackground(new java.awt.Color(232, 57, 95));
+            jtable_listar_registros.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+            jtable_listar_registros.getTableHeader().setReorderingAllowed(false);
+            jScrollPane3.setViewportView(jtable_listar_registros);
+            int columnCount = jtable_listar_registros.getColumnModel().getColumnCount();
+            if(columnCount > 0){
+                for (int i = 0; i < columnCount; i++) {
+                    jtable_listar_registros.getColumnModel().getColumn(i).setResizable(false);
+                }
+            }
+        }   
     }
     
    int get_pos_primer_registro(){
@@ -2504,12 +2574,12 @@ public class Main extends javax.swing.JFrame {
             for (Campo c : r.getCampos()) {
                 longitud += c.getLongitud();
                 linea += c.getContenido().toString();
-                if(campos_Archivo_Actual.indexOf(c) != campos_Archivo_Actual.size()-1){
+                if(r.getCampos().indexOf(c) < campos_Archivo_Actual.size()-1){
                     linea += '|';
                 }
             }
             StringBuffer sb = new StringBuffer(linea);
-            sb.setLength(longitud + r.getCampos().size());
+            sb.setLength(longitud + (r.getCampos().size()-1));
             raf.writeChars(sb.toString());
             raf.writeChar('\n');
         } catch (Exception e) {
@@ -2879,6 +2949,7 @@ public class Main extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel7;
     private javax.swing.JPopupMenu jPopup_campos;
+    private javax.swing.JPopupMenu jPopup_registros;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
@@ -2899,7 +2970,9 @@ public class Main extends javax.swing.JFrame {
     private javax.swing.JLabel jl_text_registros;
     private javax.swing.JLabel jl_username;
     private javax.swing.JMenuItem jmi_borrar_campo;
+    private javax.swing.JMenuItem jmi_borrar_registro;
     private javax.swing.JMenuItem jmi_modificar_campo;
+    private javax.swing.JMenuItem jmi_modificar_registro;
     private javax.swing.JPanel jp_abrir_archivo;
     private javax.swing.JPanel jp_agregar_campo;
     private javax.swing.JPanel jp_boton_modificar_campo;
@@ -2908,6 +2981,7 @@ public class Main extends javax.swing.JFrame {
     private javax.swing.JPanel jp_crear_campos;
     private javax.swing.JPanel jp_crear_indices;
     private javax.swing.JPanel jp_crear_nuevo_archivo;
+    private javax.swing.JPanel jp_cruzar_archivos;
     private javax.swing.JPanel jp_exit;
     private javax.swing.JPanel jp_exit_home;
     private javax.swing.JPanel jp_exit_modificar_campo;
