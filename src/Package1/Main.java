@@ -2323,7 +2323,7 @@ public class Main extends javax.swing.JFrame {
                 if(campos_Archivo_Actual.get(i).getLongitud() < str.length()){
                     validacion_longitud = false;
                     JOptionPane.showMessageDialog(jp_introducir_registros, campos_Archivo_Actual.get(i).getNombre() + " debe tener longitud maxima de " 
-                            + campos_Archivo_Actual.get(i).getLongitud() +"!");
+                                                    + campos_Archivo_Actual.get(i).getLongitud() +"!");
                     i = total_de_campos;
                 }
             }
@@ -2340,11 +2340,9 @@ public class Main extends javax.swing.JFrame {
                             contenido =  Integer.parseInt(c.getContenido().toString());
                         }
                     }
-                    //System.out.println(contenido);
                     Key llave = new Key(cantidad_de_registros(), contenido);
-                    //arbol.insertarLlave(llave, arbol.getRoot());
-                    //System.out.println(arbol);
-                    //System.out.println(llave);
+                    arbol.insertarLlave(llave, arbol.getRoot());
+                    System.out.println(arbol);
                     escribir_registro_availist_empty(r);
                     JOptionPane.showMessageDialog(jp_introducir_registros, "Registro agregado exitosamente!");
                     set_jtable_insertar_registro();
@@ -2396,6 +2394,39 @@ public class Main extends javax.swing.JFrame {
                 new Main().setVisible(true);
             }
         });
+    }
+    
+    Key EncontrarLlave(Node nodo, int llave) {
+        boolean found = false;
+        if (nodo.isLeaf()) {
+            for (int i = 0; i < nodo.getKeys().length; i++) {
+                if (llave == nodo.getKeys()[i].getContenido()) {
+                    found = true;
+                    return nodo.getKeys()[i];
+                }
+            }
+            if (found == false) {
+                return null;
+            }
+        } else {
+            for (int i = 0; i < nodo.getKeys().length; i++) {
+                if (llave == nodo.getKeys()[i].getContenido()) {
+                    found = true;
+                    return nodo.getKeys()[i];
+                }
+            }
+        }
+        int pos = -1;
+        for (int i = 0; i < nodo.getKeys().length; i++) {
+            if (nodo.getKeys()[i].getContenido() < llave) {
+                pos = i;
+                break;
+            }
+        }
+        if (pos == -1 && nodo.getKeys()[nodo.getKeys().length] != null) {
+            pos = nodo.getKeys().length;
+        }
+        return EncontrarLlave(nodo.getChildNodes()[pos], llave);
     }
     
     void escribir_registro_with_availList(Registro r){

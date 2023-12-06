@@ -58,7 +58,7 @@ public class BTree implements Serializable{
         // Check if the node is a leaf and has space for the key
         if ((nodo.isLeaf() && nodo.getKeys()[nodo.getKeys().length-1] == null)) {
             insertarEnHoja(key, nodo);
-        } else if (nodo.getKeys()[nodo.getKeys().length] != null) {
+        } else if (nodo.getKeys()[nodo.getKeys().length-1] != null) {
             // If the node is full, split it and then insert the key
             splitNode(nodo);
             insertarLlave(key, nodo.getParent());
