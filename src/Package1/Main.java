@@ -16,6 +16,8 @@ import java.io.RandomAccessFile;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Formatter;
 import java.util.HashSet;
@@ -454,6 +456,11 @@ public class Main extends javax.swing.JFrame {
 
         jmi_borrar_registro.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/eliminar16px.png"))); // NOI18N
         jmi_borrar_registro.setText("Borrar Registro");
+        jmi_borrar_registro.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jmi_borrar_registroActionPerformed(evt);
+            }
+        });
         jPopup_registros.add(jmi_borrar_registro);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -1893,8 +1900,8 @@ public class Main extends javax.swing.JFrame {
                 try {
                     if(archivo.createNewFile()){
                         //Crear arbol
-                        arbol.guardarBTree("./Archivos/"+jtf_nombre_nuevo_archivo.getText()+".bin");
-                        System.out.println(arbol);
+                        //arbol.guardarBTree("./Archivos/"+jtf_nombre_nuevo_archivo.getText()+".bin");
+                        //System.out.println(arbol);
                         JOptionPane.showMessageDialog(jp_new_file, "Archivo creado exitosamente!");
                        
                         abrev_entidad_actual(filename);
@@ -1905,6 +1912,28 @@ public class Main extends javax.swing.JFrame {
                         jl_agregar_registro.setText("Campos de " + entidad_actual);
                         jl_listar_registros.setText("Registros de " + entidad_actual);
                         opened_file = archivo;
+                        
+                        // Crear campos y registros de prueba
+                        Campo c1 = new Campo("Nombre", "String", 20, false);
+                        Campo c2 = new Campo("Id", "int", 6, true);
+                        campos_Archivo_Actual.add(c1);
+                        campos_Archivo_Actual.add(c2);
+                        escribir_campos();
+                        Registro r1 = new Registro();
+                        r1.setCampos(campos_Archivo_Actual);
+                        r1.getCampos().get(0).setContenido("Jorge");
+                        r1.getCampos().get(1).setContenido(123);
+                        escribir_registro_availist_empty(r1);
+                        Registro r2 = new Registro();
+                        r2.setCampos(campos_Archivo_Actual);
+                        r2.getCampos().get(0).setContenido("Javier");
+                        r2.getCampos().get(1).setContenido(321);
+                        escribir_registro_availist_empty(r2);
+                        Registro r3 = new Registro();
+                        r3.setCampos(campos_Archivo_Actual);
+                        r3.getCampos().get(0).setContenido("Alex");
+                        r3.getCampos().get(1).setContenido(456);
+                        escribir_registro_availist_empty(r3);
                     } else {
                         JOptionPane.showMessageDialog(jp_new_file, "Ya existe un archivo con el mismo nombre en esta ubicación.");
                     }
@@ -2364,6 +2393,51 @@ public class Main extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jtable_listar_registrosMouseClicked
 
+    private void jmi_borrar_registroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmi_borrar_registroActionPerformed
+        try {
+            int indice = jtable_listar_registros.getSelectedRow(); // Indica el numero de registro seleccionado
+            int num_campo_llave = 0;
+            for (int i = 0; i < campos_Archivo_Actual.size(); i++) { // for para saber la posicion del campo que es llave 
+                if(campos_Archivo_Actual.get(i).isEsLlave()){
+                    num_campo_llave = i;
+                }
+            }
+            String registro_borrar = jtable_listar_registros.getValueAt(indice, num_campo_llave).toString(); // Obtenemos el contenido llave del jtable
+            int seleccion = JOptionPane.showConfirmDialog(jp_listar_registros, "Desea borrar el registro " + registro_borrar + " ?", "Confirmar", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+            if(seleccion == JOptionPane.OK_OPTION){
+                RandomAccessFile raf = new RandomAccessFile(opened_file, "rw");
+                int longitud_registro = 0;
+                int longitud_de_campos = 0;
+                for (Campo c : campos_Archivo_Actual) {
+                    longitud_de_campos += c.getLongitud();
+                }
+                // Posicion Primer registro = ((campos_Archivo_Actual.size()+1)*52)
+                longitud_registro += ((longitud_de_campos + (campos_Archivo_Actual.size()-1))*2)+2; // Valor de cada campo + valor de las pipes + salto de linea
+                int posicion_a_borrar = (((campos_Archivo_Actual.size()+1)*52)+(longitud_registro*indice));
+                reconstruir_availList();
+                raf.seek(posicion_a_borrar);
+                if(availList.isEmpty()){
+                    raf.writeChars("*:0:$"); // El cero nos indica que la ultima posicion disponible
+                    availList.add(posicion_a_borrar); // Agregamos al availList el rrn de la posicion borrada
+                } else{
+                    String cad = "*:" + availList.getLast() + ":$";
+                    raf.writeChars(cad);
+                    availList.add(posicion_a_borrar);
+                }
+                // Actualizamos la cabeza del availList en la metadata
+                String cabeza_availList = "";
+                cabeza_availList += posicion_a_borrar;
+                cabeza_availList += ":";
+                raf.seek(campos_Archivo_Actual.size() * 52);
+                raf.writeChars(cabeza_availList);
+                JOptionPane.showMessageDialog(jp_listar_registros, "Registro " + registro_borrar + " borrado exitosamente!");
+            }
+            set_jtable_listar_registros();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }//GEN-LAST:event_jmi_borrar_registroActionPerformed
+
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -2394,6 +2468,44 @@ public class Main extends javax.swing.JFrame {
                 new Main().setVisible(true);
             }
         });
+    }
+    
+    void reconstruir_availList(){
+        availList = new LinkedList();
+        try {
+            RandomAccessFile raf = new RandomAccessFile(opened_file, "rw");
+            raf.seek((campos_Archivo_Actual.size()) * 52); // Esta es la posicion donde finalizan los campos y se encuentra la cabeza del availList
+            String linea = raf.readLine();
+            String cabeza_availList = "";
+            int head = 0;
+            if(linea.contains(":")){
+                raf.seek((campos_Archivo_Actual.size()) * 52);
+                char caracter;
+                cabeza_availList = "";
+                while((caracter=raf.readChar()) != ':'){
+                    cabeza_availList += caracter;
+                }
+                head = Integer.parseInt(cabeza_availList);
+            }
+            
+            if(!cabeza_availList.equals("")){ // Si el string esta vacio significa que no se ha borrado ningun registro
+                while(head != 0){
+                    availList.add(head);
+                    raf.seek(head);
+                    String line = "";
+                    char c;
+                    while((c=raf.readChar()) != '$'){
+                        line += c;
+                    }
+                    String[] arr = line.split(":");
+                    head = Integer.parseInt(arr[1].trim());
+                }
+                Collections.reverse(availList); // Invertir Lista
+                System.out.println(availList);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
     
     Key EncontrarLlave(Node nodo, int llave) {
@@ -2557,12 +2669,26 @@ public class Main extends javax.swing.JFrame {
             }
             
             // Registros
-            Object[][] data = new Object[cantidad_de_registros()][size];
+            
+            int size_registros_no_eliminados = 0;
             for (int i = 0; i < cantidad_de_registros(); i++) {
                 String linea = leer_registro(i);
-                String[] campos = linea.split("\\|");
-                for (int j = 0; j < size; j++) {
-                    data[i][j] = campos[j].trim();
+                if(!linea.contains("*")){
+                    size_registros_no_eliminados ++;
+                }
+            }
+            //System.out.println(size_registros_no_eliminados);
+            
+            Object[][] data = new Object[size_registros_no_eliminados][size];
+            int contador = 0;
+            for (int i = 0; i < cantidad_de_registros(); i++) {
+                String linea = leer_registro(i);
+                if(!linea.contains("*")){
+                    String[] campos = linea.split("\\|");
+                    for (int j = 0; j < size; j++) {
+                        data[contador][j] = campos[j].trim();
+                    }
+                    contador ++;
                 }
             }
             
@@ -2621,10 +2747,6 @@ public class Main extends javax.swing.JFrame {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-    
-    void reconstruir_availist(){
-        
     }
     
     boolean onlyDigits(String str){

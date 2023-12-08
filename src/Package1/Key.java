@@ -36,7 +36,5 @@ public class Key implements Serializable{
     public String toString() {
         return "Key{" + "rrn=" + rrn + ", contenido=" + contenido + '}';
     }
-    
-    
-    
+   
 }
