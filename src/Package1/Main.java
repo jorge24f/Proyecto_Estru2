@@ -198,6 +198,7 @@ public class Main extends javax.swing.JFrame {
         jp_re_indexar_archivos = new javax.swing.JPanel();
         jtp_estandarizacion = new javax.swing.JTabbedPane();
         jp_exportar_excel = new javax.swing.JPanel();
+        jb_exportar_excel = new javax.swing.JButton();
         jp_exportar_xml_con_schema = new javax.swing.JPanel();
 
         jmi_modificar_campo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/Modify16px.png"))); // NOI18N
@@ -1412,15 +1413,34 @@ public class Main extends javax.swing.JFrame {
 
         jp_home.add(jtp_indices, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 100, 850, 570));
 
+        jtp_estandarizacion.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                jtp_estandarizacionStateChanged(evt);
+            }
+        });
+
+        jb_exportar_excel.setText("Exportar a Excel");
+        jb_exportar_excel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jb_exportar_excelMouseClicked(evt);
+            }
+        });
+
         javax.swing.GroupLayout jp_exportar_excelLayout = new javax.swing.GroupLayout(jp_exportar_excel);
         jp_exportar_excel.setLayout(jp_exportar_excelLayout);
         jp_exportar_excelLayout.setHorizontalGroup(
             jp_exportar_excelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 845, Short.MAX_VALUE)
+            .addGroup(jp_exportar_excelLayout.createSequentialGroup()
+                .addGap(34, 34, 34)
+                .addComponent(jb_exportar_excel, javax.swing.GroupLayout.PREFERRED_SIZE, 169, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(642, Short.MAX_VALUE))
         );
         jp_exportar_excelLayout.setVerticalGroup(
             jp_exportar_excelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 542, Short.MAX_VALUE)
+            .addGroup(jp_exportar_excelLayout.createSequentialGroup()
+                .addGap(36, 36, 36)
+                .addComponent(jb_exportar_excel, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(438, Short.MAX_VALUE))
         );
 
         jtp_estandarizacion.addTab("Exportar Excel", jp_exportar_excel);
@@ -2310,6 +2330,7 @@ public class Main extends javax.swing.JFrame {
         boolean validacionInt = true;
         boolean validacionDouble = true;
         boolean validacionChar = true;
+        boolean validacionString = true;
         if(validar_campos_llenos_introducir_registro()){ // validamos que todos los campos esten llenos
             
             int total_de_campos = campos_Archivo_Actual.size(); // cantidad de campos en un registro
@@ -2341,7 +2362,16 @@ public class Main extends javax.swing.JFrame {
                         validacionChar = false;
                         JOptionPane.showMessageDialog(jp_introducir_registros, campos_Archivo_Actual.get(i).getNombre() + " debe ser un solo caracter!");
                         i = total_de_campos;
+                    } else if(str.charAt(0) == '*'){
+                        validacionChar = false;
+                        JOptionPane.showMessageDialog(jp_introducir_registros, campos_Archivo_Actual.get(i).getNombre() + ", no se permiten * !");
                     }
+                } else if(campos_Archivo_Actual.get(i).getTipo().equals("String")){
+                    String str = jtable_insertar_registro.getValueAt(0, i).toString();
+                    if(str.contains("*") || str.contains(":") || str.contains("|") || str.contains(";")){
+                        validacionString = false;
+                        JOptionPane.showMessageDialog(jp_introducir_registros, campos_Archivo_Actual.get(i).getNombre() + ", no se permiten *,|,;,: !");
+                    } 
                 }
             }
             
@@ -2358,7 +2388,7 @@ public class Main extends javax.swing.JFrame {
             }
             
             
-            if(validacionInt && validacionChar && validacionDouble && validacion_longitud){ // Entramos solo si los tipos de datos concuerdan con lo ingresado por el usuario
+            if(validacionInt && validacionChar && validacionDouble && validacion_longitud && validacionString){ // Entramos solo si los tipos de datos concuerdan con lo ingresado por el usuario
                 for (int i = 0; i < total_de_campos; i++) {
                     r.getCampos().get(i).setContenido(jtable_insertar_registro.getValueAt(0, i)); // Llenamos el contenido de cada campo del registro
                 }
@@ -2372,6 +2402,8 @@ public class Main extends javax.swing.JFrame {
                     Key llave = new Key(cantidad_de_registros(), contenido);
                     arbol.insertarLlave(llave, arbol.getRoot());
                     System.out.println(arbol);
+                    System.out.println(arbol.getRoot().isLeaf());
+                    System.out.println(arbol.getRoot().getNumKeys());
                     escribir_registro_availist_empty(r);
                     JOptionPane.showMessageDialog(jp_introducir_registros, "Registro agregado exitosamente!");
                     set_jtable_insertar_registro();
@@ -2438,6 +2470,24 @@ public class Main extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jmi_borrar_registroActionPerformed
 
+    private void jtp_estandarizacionStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jtp_estandarizacionStateChanged
+       int selectedIndex = jtp_estandarizacion.getSelectedIndex();
+       if(selectedIndex == 0){ // Exportar Exce;
+//           
+       }
+    }//GEN-LAST:event_jtp_estandarizacionStateChanged
+
+    private void jb_exportar_excelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jb_exportar_excelMouseClicked
+        set_jtable_listar_registros();
+           ExcelClass export = new ExcelClass();
+           try {
+               export.toExcel(jtable_listar_registros);
+           } catch (Exception e) {
+               e.printStackTrace();
+           }
+           JOptionPane.showMessageDialog(jp_exportar_excel, "Se ha exportado " + entidad_actual + " a Excel!");
+    }//GEN-LAST:event_jb_exportar_excelMouseClicked
+
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -2468,6 +2518,10 @@ public class Main extends javax.swing.JFrame {
                 new Main().setVisible(true);
             }
         });
+    }
+    
+    void cargar_Btree(){
+        arbol = new BTree();
     }
     
     void reconstruir_availList(){
@@ -2501,52 +2555,32 @@ public class Main extends javax.swing.JFrame {
                     head = Integer.parseInt(arr[1].trim());
                 }
                 Collections.reverse(availList); // Invertir Lista
-                System.out.println(availList);
+                //System.out.println(availList);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
     
-    Key EncontrarLlave(Node nodo, int llave) {
-        boolean found = false;
-        if (nodo.isLeaf()) {
-            for (int i = 0; i < nodo.getKeys().length; i++) {
-                if (llave == nodo.getKeys()[i].getContenido()) {
-                    found = true;
-                    return nodo.getKeys()[i];
-                }
-            }
-            if (found == false) {
-                return null;
-            }
-        } else {
-            for (int i = 0; i < nodo.getKeys().length; i++) {
-                if (llave == nodo.getKeys()[i].getContenido()) {
-                    found = true;
-                    return nodo.getKeys()[i];
-                }
-            }
+    public Key EncontrarLlave(Node nodo, int llave) {
+        if (nodo == null) {
+            return null;
         }
-        int pos = -1;
+
         for (int i = 0; i < nodo.getKeys().length; i++) {
-            if (nodo.getKeys()[i].getContenido() < llave) {
-                pos = i;
-                break;
+            if (nodo.getKeys()[i] != null && llave == nodo.getKeys()[i].getContenido()) {
+                return nodo.getKeys()[i]; // Key found in the current node
+            } else if (nodo.getKeys()[i] != null && llave < nodo.getKeys()[i].getContenido()) {
+                // Key is not in the current node and is less than the current key, search in the child node
+                return EncontrarLlave(nodo.getChildNodes()[i], llave);
             }
         }
-        if (pos == -1 && nodo.getKeys()[nodo.getKeys().length] != null) {
-            pos = nodo.getKeys().length;
-        }
-        return EncontrarLlave(nodo.getChildNodes()[pos], llave);
-    }
-    
-    void escribir_registro_with_availList(Registro r){
-        
+
+        // If the key is greater than all keys in the node, search in the rightmost child
+        return EncontrarLlave(nodo.getChildNodes()[nodo.getKeys().length], llave);
     }
     
     int ConseguirPosicion(Node nodo, int llave) {
-        
         if (nodo.isLeaf()) {
             boolean found = false;
             for (int i = 0; i < nodo.getKeys().length; i++) {
@@ -3111,6 +3145,7 @@ public class Main extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JButton jb_exportar_excel;
     private javax.swing.JButton jb_introducir_registro;
     private javax.swing.JDialog jd_modificar_campo;
     private javax.swing.JLabel jl_FechaActual_home;

@@ -10,7 +10,7 @@ public class Node implements Serializable{
     private boolean leaf;
     private Key[] keys = new Key[5];
     private Node[] childNodes = new Node[6];
-     private Node parent;
+    private Node parent;
 
     public Node() {
     }
@@ -77,10 +77,15 @@ public class Node implements Serializable{
         return false;
     }
     
-    public void addKey(Key key){
-        if(keys.length == 0){
-            
+    public Node addChildNode(Node childNode) {
+        for (int i = 0; i < childNodes.length; i++) {
+            if (childNodes[i] == null) {
+                childNodes[i] = childNode;
+                childNode.setParent(this);
+                return this;
+            }
         }
+        return this;
     }
     
     @Override
