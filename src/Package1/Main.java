@@ -200,6 +200,7 @@ public class Main extends javax.swing.JFrame {
         jp_exportar_excel = new javax.swing.JPanel();
         jb_exportar_excel = new javax.swing.JButton();
         jp_exportar_xml_con_schema = new javax.swing.JPanel();
+        jb_exportar_xml = new javax.swing.JButton();
 
         jmi_modificar_campo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/Modify16px.png"))); // NOI18N
         jmi_modificar_campo.setText("Modificar Campo");
@@ -1419,6 +1420,7 @@ public class Main extends javax.swing.JFrame {
             }
         });
 
+        jb_exportar_excel.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
         jb_exportar_excel.setText("Exportar a Excel");
         jb_exportar_excel.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -1431,29 +1433,43 @@ public class Main extends javax.swing.JFrame {
         jp_exportar_excelLayout.setHorizontalGroup(
             jp_exportar_excelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jp_exportar_excelLayout.createSequentialGroup()
-                .addGap(34, 34, 34)
-                .addComponent(jb_exportar_excel, javax.swing.GroupLayout.PREFERRED_SIZE, 169, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(642, Short.MAX_VALUE))
+                .addGap(40, 40, 40)
+                .addComponent(jb_exportar_excel, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(605, Short.MAX_VALUE))
         );
         jp_exportar_excelLayout.setVerticalGroup(
             jp_exportar_excelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jp_exportar_excelLayout.createSequentialGroup()
-                .addGap(36, 36, 36)
-                .addComponent(jb_exportar_excel, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(438, Short.MAX_VALUE))
+                .addGap(40, 40, 40)
+                .addComponent(jb_exportar_excel, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(402, Short.MAX_VALUE))
         );
 
         jtp_estandarizacion.addTab("Exportar Excel", jp_exportar_excel);
+
+        jb_exportar_xml.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
+        jb_exportar_xml.setText("Exportar a XML");
+        jb_exportar_xml.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jb_exportar_xmlMouseClicked(evt);
+            }
+        });
 
         javax.swing.GroupLayout jp_exportar_xml_con_schemaLayout = new javax.swing.GroupLayout(jp_exportar_xml_con_schema);
         jp_exportar_xml_con_schema.setLayout(jp_exportar_xml_con_schemaLayout);
         jp_exportar_xml_con_schemaLayout.setHorizontalGroup(
             jp_exportar_xml_con_schemaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 845, Short.MAX_VALUE)
+            .addGroup(jp_exportar_xml_con_schemaLayout.createSequentialGroup()
+                .addGap(40, 40, 40)
+                .addComponent(jb_exportar_xml, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(605, Short.MAX_VALUE))
         );
         jp_exportar_xml_con_schemaLayout.setVerticalGroup(
             jp_exportar_xml_con_schemaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 542, Short.MAX_VALUE)
+            .addGroup(jp_exportar_xml_con_schemaLayout.createSequentialGroup()
+                .addGap(40, 40, 40)
+                .addComponent(jb_exportar_xml, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(402, Short.MAX_VALUE))
         );
 
         jtp_estandarizacion.addTab("Exportar XML con Schema", jp_exportar_xml_con_schema);
@@ -2488,6 +2504,17 @@ public class Main extends javax.swing.JFrame {
            JOptionPane.showMessageDialog(jp_exportar_excel, "Se ha exportado " + entidad_actual + " a Excel!");
     }//GEN-LAST:event_jb_exportar_excelMouseClicked
 
+    private void jb_exportar_xmlMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jb_exportar_xmlMouseClicked
+        set_jtable_listar_registros();
+        XmlClass export = new XmlClass();
+        try {
+            export.toXML(jtable_listar_registros, entidad_actual);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        JOptionPane.showMessageDialog(jp_exportar_excel, "Se ha exportado " + entidad_actual + " a XML!");
+    }//GEN-LAST:event_jb_exportar_xmlMouseClicked
+
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -3146,6 +3173,7 @@ public class Main extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JButton jb_exportar_excel;
+    private javax.swing.JButton jb_exportar_xml;
     private javax.swing.JButton jb_introducir_registro;
     private javax.swing.JDialog jd_modificar_campo;
     private javax.swing.JLabel jl_FechaActual_home;
