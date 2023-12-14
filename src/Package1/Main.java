@@ -192,6 +192,9 @@ public class Main extends javax.swing.JFrame {
         jPanel7 = new javax.swing.JPanel();
         jl_listar_registros = new javax.swing.JLabel();
         jp_buscar_registros = new javax.swing.JPanel();
+        jLabel14 = new javax.swing.JLabel();
+        jtf_llave_buscar_registro = new javax.swing.JTextField();
+        jb_buscar_registro = new javax.swing.JButton();
         jp_cruzar_archivos = new javax.swing.JPanel();
         jtp_indices = new javax.swing.JTabbedPane();
         jp_crear_indices = new javax.swing.JPanel();
@@ -454,6 +457,11 @@ public class Main extends javax.swing.JFrame {
 
         jmi_modificar_registro.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/Modify16px.png"))); // NOI18N
         jmi_modificar_registro.setText("Modificar Registro");
+        jmi_modificar_registro.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jmi_modificar_registroActionPerformed(evt);
+            }
+        });
         jPopup_registros.add(jmi_modificar_registro);
 
         jmi_borrar_registro.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/eliminar16px.png"))); // NOI18N
@@ -1260,7 +1268,7 @@ public class Main extends javax.swing.JFrame {
                 .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jp_introducir_registrosLayout.createSequentialGroup()
-                .addContainerGap(24, Short.MAX_VALUE)
+                .addContainerGap(25, Short.MAX_VALUE)
                 .addGroup(jp_introducir_registrosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jp_introducir_registrosLayout.createSequentialGroup()
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 795, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1344,7 +1352,7 @@ public class Main extends javax.swing.JFrame {
             .addGroup(jp_listar_registrosLayout.createSequentialGroup()
                 .addGap(25, 25, 25)
                 .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 795, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(24, Short.MAX_VALUE))
+                .addContainerGap(25, Short.MAX_VALUE))
         );
         jp_listar_registrosLayout.setVerticalGroup(
             jp_listar_registrosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1358,15 +1366,38 @@ public class Main extends javax.swing.JFrame {
 
         jtp_registros.addTab("Listar - Modificar - Borrar", jp_listar_registros);
 
+        jLabel14.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
+        jLabel14.setText("Ingrese la llave:");
+
+        jb_buscar_registro.setText("Buscar");
+        jb_buscar_registro.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jb_buscar_registroMouseClicked(evt);
+            }
+        });
+
         javax.swing.GroupLayout jp_buscar_registrosLayout = new javax.swing.GroupLayout(jp_buscar_registros);
         jp_buscar_registros.setLayout(jp_buscar_registrosLayout);
         jp_buscar_registrosLayout.setHorizontalGroup(
             jp_buscar_registrosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 844, Short.MAX_VALUE)
+            .addGroup(jp_buscar_registrosLayout.createSequentialGroup()
+                .addGap(43, 43, 43)
+                .addGroup(jp_buscar_registrosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel14)
+                    .addComponent(jtf_llave_buscar_registro, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jb_buscar_registro, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(602, Short.MAX_VALUE))
         );
         jp_buscar_registrosLayout.setVerticalGroup(
             jp_buscar_registrosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 542, Short.MAX_VALUE)
+            .addGroup(jp_buscar_registrosLayout.createSequentialGroup()
+                .addGap(43, 43, 43)
+                .addComponent(jLabel14)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jtf_llave_buscar_registro, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jb_buscar_registro, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(399, Short.MAX_VALUE))
         );
 
         jtp_registros.addTab("Buscar", jp_buscar_registros);
@@ -1375,7 +1406,7 @@ public class Main extends javax.swing.JFrame {
         jp_cruzar_archivos.setLayout(jp_cruzar_archivosLayout);
         jp_cruzar_archivosLayout.setHorizontalGroup(
             jp_cruzar_archivosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 844, Short.MAX_VALUE)
+            .addGap(0, 845, Short.MAX_VALUE)
         );
         jp_cruzar_archivosLayout.setVerticalGroup(
             jp_cruzar_archivosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1950,26 +1981,26 @@ public class Main extends javax.swing.JFrame {
                         opened_file = archivo;
                         
                         // Crear campos y registros de prueba
-                        Campo c1 = new Campo("Nombre", "String", 20, false);
-                        Campo c2 = new Campo("Id", "int", 6, true);
-                        campos_Archivo_Actual.add(c1);
-                        campos_Archivo_Actual.add(c2);
-                        escribir_campos();
-                        Registro r1 = new Registro();
-                        r1.setCampos(campos_Archivo_Actual);
-                        r1.getCampos().get(0).setContenido("Jorge");
-                        r1.getCampos().get(1).setContenido(123);
-                        escribir_registro_availist_empty(r1);
-                        Registro r2 = new Registro();
-                        r2.setCampos(campos_Archivo_Actual);
-                        r2.getCampos().get(0).setContenido("Javier");
-                        r2.getCampos().get(1).setContenido(321);
-                        escribir_registro_availist_empty(r2);
-                        Registro r3 = new Registro();
-                        r3.setCampos(campos_Archivo_Actual);
-                        r3.getCampos().get(0).setContenido("Alex");
-                        r3.getCampos().get(1).setContenido(456);
-                        escribir_registro_availist_empty(r3);
+//                        Campo c1 = new Campo("Nombre", "String", 20, false);
+//                        Campo c2 = new Campo("Id", "int", 6, true);
+//                        campos_Archivo_Actual.add(c1);
+//                        campos_Archivo_Actual.add(c2);
+//                        escribir_campos();
+//                        Registro r1 = new Registro();
+//                        r1.setCampos(campos_Archivo_Actual);
+//                        r1.getCampos().get(0).setContenido("Jorge");
+//                        r1.getCampos().get(1).setContenido(123);
+//                        escribir_registro_availist_empty(r1);
+//                        Registro r2 = new Registro();
+//                        r2.setCampos(campos_Archivo_Actual);
+//                        r2.getCampos().get(0).setContenido("Javier");
+//                        r2.getCampos().get(1).setContenido(321);
+//                        escribir_registro_availist_empty(r2);
+//                        Registro r3 = new Registro();
+//                        r3.setCampos(campos_Archivo_Actual);
+//                        r3.getCampos().get(0).setContenido("Alex");
+//                        r3.getCampos().get(1).setContenido(456);
+//                        escribir_registro_availist_empty(r3);
                     } else {
                         JOptionPane.showMessageDialog(jp_new_file, "Ya existe un archivo con el mismo nombre en esta ubicación.");
                     }
@@ -2527,6 +2558,31 @@ public class Main extends javax.swing.JFrame {
         JOptionPane.showMessageDialog(jp_exportar_excel, "Se ha exportado " + entidad_actual + " a XML!");
     }//GEN-LAST:event_jb_exportar_xmlMouseClicked
 
+    private void jb_buscar_registroMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jb_buscar_registroMouseClicked
+        int llave = Integer.parseInt(jtf_llave_buscar_registro.getText());
+        Key k = EncontrarLlave(arbol.getRoot(), llave);
+        if(k != null){
+            //System.out.println(k.getRrn());
+            int cantidad_de_campos = campos_Archivo_Actual.size();
+            Registro r = new Registro();
+            String linea = leer_registro(k.getRrn());
+                if(!linea.contains("*")){
+                    String[] campos = linea.split("\\|");
+                    for (int j = 0; j < cantidad_de_campos; j++) {
+                        r.getCampos().get(j).setContenido(campos[j].trim());
+                    }
+                }
+            JOptionPane.showMessageDialog(jp_buscar_registros, r);
+        } else {
+            JOptionPane.showMessageDialog(jp_buscar_registros, "El registro solicitado no existe!");
+        }
+        //System.out.println(arbol.toString());
+    }//GEN-LAST:event_jb_buscar_registroMouseClicked
+
+    private void jmi_modificar_registroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmi_modificar_registroActionPerformed
+        // Modificar registro
+    }//GEN-LAST:event_jmi_modificar_registroActionPerformed
+
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -2644,58 +2700,35 @@ public class Main extends javax.swing.JFrame {
             e.printStackTrace();
         }
     }
-    
+   
     public Key EncontrarLlave(Node nodo, int llave) {
-        if (nodo == null) {
+        if(nodo == null){
             return null;
         }
-
+        
+        boolean found = false;
+        System.out.println("entro a encontrar llave" + found);
         for (int i = 0; i < nodo.getKeys().length; i++) {
             if (nodo.getKeys()[i] != null && llave == nodo.getKeys()[i].getContenido()) {
-                return nodo.getKeys()[i]; // Key found in the current node
-            } else if (nodo.getKeys()[i] != null && llave < nodo.getKeys()[i].getContenido()) {
-                // Key is not in the current node and is less than the current key, search in the child node
-                return EncontrarLlave(nodo.getChildNodes()[i], llave);
+                System.out.println("entro a encontrado en nodo");
+                return nodo.getKeys()[i];
             }
         }
-
+        if (found == false) {
+            for (int i = 0; i < nodo.getKeys().length; i++) {
+                if (nodo.getKeys()[i] != null && llave < nodo.getKeys()[i].getContenido()) {
+                    System.out.println("entro a llave no esta en nodo");
+                    return EncontrarLlave(nodo.getChildNodes()[i], llave);
+                } else if (nodo.getKeys()[i] == null) {
+                    return EncontrarLlave(nodo.getChildNodes()[i], llave);
+                }
+            }
+        }
         // If the key is greater than all keys in the node, search in the rightmost child
-        return EncontrarLlave(nodo.getChildNodes()[nodo.getKeys().length], llave);
+
+        return EncontrarLlave(nodo.getChildNodes()[nodo.getChildNodes().length - 1], llave);
     }
-    
-    int ConseguirPosicion(Node nodo, int llave) {
-        if (nodo.isLeaf()) {
-            boolean found = false;
-            for (int i = 0; i < nodo.getKeys().length; i++) {
-                if (llave == nodo.getKeys()[i].getContenido()) {
-                    found = true;
-                    return nodo.getKeys()[i].getRrn();
-                }
-            }
-            if (found == false) {
-                return -1;
-            }
-        } else {
-            for (int i = 0; i < nodo.getKeys().length; i++) {
-                if (llave == nodo.getKeys()[i].getContenido() ) {
-                    return nodo.getKeys()[i].getRrn();
-                }
-            }
-        }
-        int pos = -1;
-        for (int i = 0; i < nodo.getKeys().length; i++) {
-            if (nodo.getKeys()[i].getContenido() < llave) {
-                pos = i;
-                break;
-            }
-        }
-        if (pos == -1) {
-            pos =nodo.getKeys().length;
-        }
-        
-        return ConseguirPosicion(nodo.getChildNodes()[pos], llave);
-    }
-    
+   
     int cantidad_de_registros(){
         if(leer_registro(0) != null){
             try {
@@ -3206,6 +3239,7 @@ public class Main extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel136;
+    private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel141;
     private javax.swing.JLabel jLabel142;
     private javax.swing.JLabel jLabel2;
@@ -3228,6 +3262,7 @@ public class Main extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JButton jb_buscar_registro;
     private javax.swing.JButton jb_exportar_excel;
     private javax.swing.JButton jb_exportar_xml;
     private javax.swing.JButton jb_introducir_registro;
@@ -3301,6 +3336,7 @@ public class Main extends javax.swing.JFrame {
     private javax.swing.JTable jtable_campos;
     private javax.swing.JTable jtable_insertar_registro;
     private javax.swing.JTable jtable_listar_registros;
+    private javax.swing.JTextField jtf_llave_buscar_registro;
     private javax.swing.JFormattedTextField jtf_longitud_crear_campo;
     private javax.swing.JTextField jtf_nombre_crear_campo;
     private javax.swing.JTextField jtf_nombre_nuevo_archivo;

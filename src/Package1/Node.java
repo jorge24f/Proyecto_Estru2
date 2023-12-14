@@ -90,7 +90,30 @@ public class Node implements Serializable{
     
     @Override
     public String toString() {
-        return "Node{" + "keys=" + Arrays.toString(keys) + '}';
+        String llaves = "";
+        for (int i = 0; i < 5; i++) {
+            if (keys[i] != null) {
+                llaves += "Key'{'rrn=" + keys[i].getRrn() + ", contenido=" + keys[i].getContenido() + '}';
+            }
+        }
+        String hijos = "";
+        for (int i = 0; i < 6; i++) {
+            if (childNodes[i] != null) {
+                hijos += "Hijo " + i + ": ";
+                for (int j = 0; j < 5; j++) {
+                    if (childNodes[i].getKeys()[j] != null) {
+                        hijos += "Key'{'rrn=" + childNodes[i].getKeys()[j].getRrn() + ", contenido=" + childNodes[i].getKeys()[j].getContenido() + '}';
+                    }
+                }
+            }
+        }
+        return "Node{"
+                + "leaf=" + leaf
+                + "  " + llaves
+                + ", childNodes=" + hijos
+                + ", parent=" + parent
+                + '}';
     }
+    //Arrays.toString(keys);
 
 }
