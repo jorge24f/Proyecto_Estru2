@@ -2504,7 +2504,22 @@ public class Main extends javax.swing.JFrame {
                 }
                 // Posicion Primer registro = ((campos_Archivo_Actual.size()+1)*52)
                 longitud_registro += ((longitud_de_campos + (campos_Archivo_Actual.size()-1))*2)+2; // Valor de cada campo + valor de las pipes + salto de linea
-                int posicion_a_borrar = (((campos_Archivo_Actual.size()+1)*52)+(longitud_registro*indice));
+                
+                //int posicion_a_borrar = (((campos_Archivo_Actual.size()+1)*52)+(longitud_registro*indice));
+                
+                //
+                int v = 0;
+                for (int i = 0; i < campos_Archivo_Actual.size(); i++) {
+                    if(campos_Archivo_Actual.get(i).isEsLlave()){
+                        v = i;
+                        i = campos_Archivo_Actual.size();
+                    }
+                }
+                int rrn = EncontrarLlave(arbol.getRoot(), Integer.parseInt(jtable_listar_registros.getValueAt(indice, v).toString())).getRrn();
+                //System.out.println(rrn);
+                int posicion_a_borrar = (((campos_Archivo_Actual.size()+1)*52)+(longitud_registro*rrn));
+                //
+                
                 reconstruir_availList();
                 raf.seek(posicion_a_borrar);
                 if(availList.isEmpty()){
@@ -2564,15 +2579,7 @@ public class Main extends javax.swing.JFrame {
         if(k != null){
             //System.out.println(k.getRrn());
             int cantidad_de_campos = campos_Archivo_Actual.size();
-            Registro r = new Registro();
-            String linea = leer_registro(k.getRrn());
-                if(!linea.contains("*")){
-                    String[] campos = linea.split("\\|");
-                    for (int j = 0; j < cantidad_de_campos; j++) {
-                        r.getCampos().get(j).setContenido(campos[j].trim());
-                    }
-                }
-            JOptionPane.showMessageDialog(jp_buscar_registros, r);
+            JOptionPane.showMessageDialog(jp_buscar_registros, leer_registro(k.getRrn()).replace("|", ", "));
         } else {
             JOptionPane.showMessageDialog(jp_buscar_registros, "El registro solicitado no existe!");
         }
@@ -2707,17 +2714,17 @@ public class Main extends javax.swing.JFrame {
         }
         
         boolean found = false;
-        System.out.println("entro a encontrar llave" + found);
+        //System.out.println("entro a encontrar llave" + found);
         for (int i = 0; i < nodo.getKeys().length; i++) {
             if (nodo.getKeys()[i] != null && llave == nodo.getKeys()[i].getContenido()) {
-                System.out.println("entro a encontrado en nodo");
+                //System.out.println("entro a encontrado en nodo");
                 return nodo.getKeys()[i];
             }
         }
         if (found == false) {
             for (int i = 0; i < nodo.getKeys().length; i++) {
                 if (nodo.getKeys()[i] != null && llave < nodo.getKeys()[i].getContenido()) {
-                    System.out.println("entro a llave no esta en nodo");
+                    //System.out.println("entro a llave no esta en nodo");
                     return EncontrarLlave(nodo.getChildNodes()[i], llave);
                 } else if (nodo.getKeys()[i] == null) {
                     return EncontrarLlave(nodo.getChildNodes()[i], llave);
