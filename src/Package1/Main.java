@@ -802,6 +802,9 @@ public class Main extends javax.swing.JFrame {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jp_crear_nuevo_archivoMouseClicked(evt);
             }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                jp_crear_nuevo_archivoMouseEntered(evt);
+            }
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 jp_crear_nuevo_archivoMouseExited(evt);
             }
@@ -1979,7 +1982,7 @@ public class Main extends javax.swing.JFrame {
                         jl_agregar_registro.setText("Campos de " + entidad_actual);
                         jl_listar_registros.setText("Registros de " + entidad_actual);
                         opened_file = archivo;
-                        
+                        arbol = new BTree();
                         // Crear registros de prueba
                         if(filename.equals("PersonFile.txt")){
                             // Campos
@@ -1992,9 +1995,8 @@ public class Main extends javax.swing.JFrame {
                             campos_Archivo_Actual.add(c3);
                             campos_Archivo_Actual.add(c4);
                             escribir_campos();
-                            //arbol.guardarBTree("./Archivos/"+jtf_nombre_nuevo_archivo.getText()+".bin");
                             DatosRandom datosr = new DatosRandom();
-                            for (int i = 0; i <= 9901; i++) {
+                            for (int i = 0; i <= 11; i++) {
                                 Persona persona = new Persona(i, datosr.nombreRand(), datosr.edadRand(), datosr.cityidRand());
                                 Registro r = new Registro();
                                 r.setCampos(campos_Archivo_Actual);
@@ -2003,7 +2005,10 @@ public class Main extends javax.swing.JFrame {
                                 r.getCampos().get(2).setContenido(persona.getAge());
                                 r.getCampos().get(3).setContenido(persona.getCityid());
                                 escribir_registro_availist_empty(r);
+                                Key llave = new Key(i, persona.getId());
+                                arbol.insertarLlave(llave, arbol.getRoot());
                             }
+                            
                         } else if(filename.equals("CityFile.txt")){
                             // Campos
                             Campo c5 = new Campo("CityId", "int", 2, true);
@@ -2011,8 +2016,8 @@ public class Main extends javax.swing.JFrame {
                             campos_Archivo_Actual.add(c5);
                             campos_Archivo_Actual.add(c6);
                             escribir_campos();
-                             DatosRandom datosr = new DatosRandom();
-                            for (int i = 0; i <= 99; i++) {
+                            DatosRandom datosr = new DatosRandom();
+                            for (int i = 0; i <= 11; i++) {
                                 Ciudad ciudad = new Ciudad(i, datosr.nombreRand());
                                 Registro r = new Registro();
                                 r.setCampos(campos_Archivo_Actual);
@@ -2024,7 +2029,9 @@ public class Main extends javax.swing.JFrame {
                             }
                             //arbol.guardarBTree("./Archivos/"+jtf_nombre_nuevo_archivo.getText()+".bin");
                         }
-                        //arbol.guardarBTree("./Archivos/"+jtf_nombre_nuevo_archivo.getText()+".bin");
+                        //File archivo_bin = new File("./Archivos/"+jtf_nombre_nuevo_archivo.getText()+".bin");
+                        arbol.guardarBTree("./Archivos/"+entidad_actual+".bin");
+                        System.out.println(arbol.toString());
                         // Crear campos y registros de prueba
 //                        Campo c1 = new Campo("Nombre", "String", 20, false);
 //                        Campo c2 = new Campo("Id", "int", 6, true);
@@ -2085,6 +2092,12 @@ public class Main extends javax.swing.JFrame {
                 jl_agregar_registro.setText("Campos de " + entidad_actual);
                 jl_listar_registros.setText("Registros de " + entidad_actual);
                 opened_file = file_chooser.getSelectedFile();
+                //System.out.println(entidad_actual);
+                arbol = new BTree();
+                //System.out.println(entidad_actual);
+                arbol.CargarBTree("./Archivo/"+entidad_actual+".bin");
+                //arbol.CargarBTree(file_chooser.getSelectedFile());
+                System.out.println(arbol.toString());
                 JOptionPane.showMessageDialog(this, "Se ha abierto: " + file_chooser.getSelectedFile().getName());
                 //System.out.println(leer_registro(0));
                 //System.out.println("Cantidad de registros: " + cantidad_de_registros());
@@ -2633,6 +2646,10 @@ public class Main extends javax.swing.JFrame {
     private void jmi_modificar_registroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmi_modificar_registroActionPerformed
         // Modificar registro
     }//GEN-LAST:event_jmi_modificar_registroActionPerformed
+
+    private void jp_crear_nuevo_archivoMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jp_crear_nuevo_archivoMouseEntered
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jp_crear_nuevo_archivoMouseEntered
 
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */

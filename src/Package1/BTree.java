@@ -1,5 +1,7 @@
 package Package1;
 
+import java.io.EOFException;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -41,6 +43,21 @@ public class BTree implements Serializable {
             } catch (IOException excep) {
             }
         }
+//        FileOutputStream fw = null;
+//        ObjectOutputStream bw = null;
+//        try {
+//            fw = new FileOutputStream(archivo);
+//            bw = new ObjectOutputStream(fw);
+//            bw.writeObject(this);
+//            bw.flush();
+//        } catch (Exception ex) {
+//        } finally {
+//            try {
+//                bw.close();
+//                fw.close();
+//            } catch (Exception ex) {
+//            }
+//        }
     }
 
     public BTree CargarBTree(String nombrearch) throws FileNotFoundException, IOException, ClassNotFoundException {
@@ -49,6 +66,22 @@ public class BTree implements Serializable {
         } catch (IOException | ClassNotFoundException ex) {
             return null;
         }
+//        try {
+//            if (archivo.exists()) {
+//                FileInputStream entrada = new FileInputStream(archivo);
+//                ObjectInputStream objeto = new ObjectInputStream(entrada);
+//                try {
+//                    return (BTree) objeto.readObject();
+//                } catch (EOFException e) {
+//                    //encontro el final del archivo
+//                }
+//                objeto.close();
+//                entrada.close();
+//            } //fin if           
+//        } catch (Exception ex) {
+//            ex.printStackTrace();
+//        }
+//        return null;
     }
 
     // Helper method to insert a key into the node
