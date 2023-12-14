@@ -1260,7 +1260,7 @@ public class Main extends javax.swing.JFrame {
                 .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jp_introducir_registrosLayout.createSequentialGroup()
-                .addContainerGap(25, Short.MAX_VALUE)
+                .addContainerGap(24, Short.MAX_VALUE)
                 .addGroup(jp_introducir_registrosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jp_introducir_registrosLayout.createSequentialGroup()
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 795, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1344,7 +1344,7 @@ public class Main extends javax.swing.JFrame {
             .addGroup(jp_listar_registrosLayout.createSequentialGroup()
                 .addGap(25, 25, 25)
                 .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 795, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(25, Short.MAX_VALUE))
+                .addContainerGap(24, Short.MAX_VALUE))
         );
         jp_listar_registrosLayout.setVerticalGroup(
             jp_listar_registrosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1362,7 +1362,7 @@ public class Main extends javax.swing.JFrame {
         jp_buscar_registros.setLayout(jp_buscar_registrosLayout);
         jp_buscar_registrosLayout.setHorizontalGroup(
             jp_buscar_registrosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 845, Short.MAX_VALUE)
+            .addGap(0, 844, Short.MAX_VALUE)
         );
         jp_buscar_registrosLayout.setVerticalGroup(
             jp_buscar_registrosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1375,7 +1375,7 @@ public class Main extends javax.swing.JFrame {
         jp_cruzar_archivos.setLayout(jp_cruzar_archivosLayout);
         jp_cruzar_archivosLayout.setHorizontalGroup(
             jp_cruzar_archivosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 845, Short.MAX_VALUE)
+            .addGap(0, 844, Short.MAX_VALUE)
         );
         jp_cruzar_archivosLayout.setVerticalGroup(
             jp_cruzar_archivosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -2408,6 +2408,8 @@ public class Main extends javax.swing.JFrame {
                 for (int i = 0; i < total_de_campos; i++) {
                     r.getCampos().get(i).setContenido(jtable_insertar_registro.getValueAt(0, i)); // Llenamos el contenido de cada campo del registro
                 }
+                reconstruir_availList();
+                //System.out.println(availList);
                 if(availList.isEmpty()){ // No hay espacios disponibles, se agrega al final
                     int contenido = 0;
                     for (Campo c : campos_Archivo_Actual) {
@@ -2417,14 +2419,24 @@ public class Main extends javax.swing.JFrame {
                     }
                     Key llave = new Key(cantidad_de_registros(), contenido);
                     arbol.insertarLlave(llave, arbol.getRoot());
-                    System.out.println(arbol);
-                    System.out.println(arbol.getRoot().isLeaf());
-                    System.out.println(arbol.getRoot().getNumKeys());
+//                    System.out.println(arbol);
+//                    System.out.println(arbol.getRoot().isLeaf());
+//                    System.out.println(arbol.getRoot().getNumKeys());
                     escribir_registro_availist_empty(r);
                     JOptionPane.showMessageDialog(jp_introducir_registros, "Registro agregado exitosamente!");
                     set_jtable_insertar_registro();
                 } else{ // El availList contiene espacios disponibles
-                    
+                    int contenido = 0;
+                    for (Campo c : campos_Archivo_Actual) {
+                        if(c.isEsLlave()){
+                            contenido =  Integer.parseInt(c.getContenido().toString());
+                        }
+                    }
+                    Key llave = new Key(cantidad_de_registros(), contenido);
+                    arbol.insertarLlave(llave, arbol.getRoot());
+                    escribir_registro_con_availList(r);
+                    JOptionPane.showMessageDialog(jp_introducir_registros, "Registro agregado exitosamente!");
+                    set_jtable_insertar_registro();
                 }
             }
             
@@ -2551,38 +2563,82 @@ public class Main extends javax.swing.JFrame {
         arbol = new BTree();
     }
     
+    void escribir_registro_con_availList(Registro r){
+        try {
+            RandomAccessFile raf = new RandomAccessFile(opened_file, "rw");
+            raf.seek(availList.getLast());
+            String linea = "";
+            int longitud = 0;
+            for (Campo c : r.getCampos()) {
+                longitud += c.getLongitud();
+                linea += c.getContenido().toString();
+                if(r.getCampos().indexOf(c) < campos_Archivo_Actual.size()-1){
+                    linea += '|';
+                }
+            }
+            StringBuffer sb = new StringBuffer(linea);
+            sb.setLength(longitud + (r.getCampos().size()-1));
+            raf.writeChars(sb.toString());
+            raf.writeChar('\n');
+            
+            // Actualizamos el availList
+            availList.removeLast();
+            // Actualizamos la cabeza del availList en la metadta
+            raf.seek((campos_Archivo_Actual.size()) * 52); // Esta es la posicion donde finalizan los campos y se encuentra la cabeza del availList
+            String cabeza_availList = "";
+            if(availList.isEmpty()){
+                cabeza_availList += "-1";
+            } else{
+                cabeza_availList += availList.getLast();
+            }
+            //cabeza_availList += ":";
+            raf.writeChars(cabeza_availList);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
     void reconstruir_availList(){
         availList = new LinkedList();
         try {
             RandomAccessFile raf = new RandomAccessFile(opened_file, "rw");
             raf.seek((campos_Archivo_Actual.size()) * 52); // Esta es la posicion donde finalizan los campos y se encuentra la cabeza del availList
             String linea = raf.readLine();
-            String cabeza_availList = "";
-            int head = 0;
-            if(linea.contains(":")){
-                raf.seek((campos_Archivo_Actual.size()) * 52);
-                char caracter;
-                cabeza_availList = "";
-                while((caracter=raf.readChar()) != ':'){
-                    cabeza_availList += caracter;
-                }
-                head = Integer.parseInt(cabeza_availList);
-            }
             
-            if(!cabeza_availList.equals("")){ // Si el string esta vacio significa que no se ha borrado ningun registro
-                while(head != 0){
-                    availList.add(head);
-                    raf.seek(head);
-                    String line = "";
-                    char c;
-                    while((c=raf.readChar()) != '$'){
-                        line += c;
+            if(!linea.contains("-")){
+              
+                String cabeza_availList = "";
+                int head = 0;
+
+
+                if(linea.contains(":")){
+                    raf.seek((campos_Archivo_Actual.size()) * 52);
+                    char caracter;
+                    cabeza_availList = "";
+                    while((caracter=raf.readChar()) != ':'){
+                        cabeza_availList += caracter;
                     }
-                    String[] arr = line.split(":");
-                    head = Integer.parseInt(arr[1].trim());
+                    head = Integer.parseInt(cabeza_availList);
                 }
-                Collections.reverse(availList); // Invertir Lista
-                //System.out.println(availList);
+
+                if(!cabeza_availList.equals("") ){ // Si el string esta vacio significa que no se ha borrado ningun registro
+                    while(head != 0){
+                        availList.add(head);
+                        raf.seek(head);
+                        String line = "";
+                        char c;
+                        while((c=raf.readChar()) != '$'){
+                            line += c;
+                        }
+                        String[] arr = line.split(":");
+                        head = Integer.parseInt(arr[1].trim());
+                    }
+                    Collections.reverse(availList); // Invertir Lista
+                    //System.out.println(availList);
+                }
+
+            } else {
+                availList = new LinkedList();
             }
         } catch (Exception e) {
             e.printStackTrace();
