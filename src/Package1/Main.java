@@ -1970,7 +1970,7 @@ public class Main extends javax.swing.JFrame {
                         //arbol.guardarBTree("./Archivos/"+jtf_nombre_nuevo_archivo.getText()+".bin");
                         //System.out.println(arbol);
                         JOptionPane.showMessageDialog(jp_new_file, "Archivo creado exitosamente!");
-                       
+                        campos_Archivo_Actual = new ArrayList();
                         abrev_entidad_actual(filename);
                         // Se abre el archivo
                         jl_archivo_actual_open.setText("Archivo actual: "+filename);
@@ -1980,6 +1980,51 @@ public class Main extends javax.swing.JFrame {
                         jl_listar_registros.setText("Registros de " + entidad_actual);
                         opened_file = archivo;
                         
+                        // Crear registros de prueba
+                        if(filename.equals("PersonFile.txt")){
+                            // Campos
+                            Campo c1 = new Campo("PersonId", "int", 6, true);
+                            Campo c2 = new Campo("PersonName", "String", 20, false);
+                            Campo c3 = new Campo("PersonAge", "int", 3, false);
+                            Campo c4 = new Campo("CityId", "int", 2, false);
+                            campos_Archivo_Actual.add(c1);
+                            campos_Archivo_Actual.add(c2);
+                            campos_Archivo_Actual.add(c3);
+                            campos_Archivo_Actual.add(c4);
+                            escribir_campos();
+                            //arbol.guardarBTree("./Archivos/"+jtf_nombre_nuevo_archivo.getText()+".bin");
+                            DatosRandom datosr = new DatosRandom();
+                            for (int i = 0; i <= 9901; i++) {
+                                Persona persona = new Persona(i, datosr.nombreRand(), datosr.edadRand(), datosr.cityidRand());
+                                Registro r = new Registro();
+                                r.setCampos(campos_Archivo_Actual);
+                                r.getCampos().get(0).setContenido(persona.getId());
+                                r.getCampos().get(1).setContenido(persona.getName());
+                                r.getCampos().get(2).setContenido(persona.getAge());
+                                r.getCampos().get(3).setContenido(persona.getCityid());
+                                escribir_registro_availist_empty(r);
+                            }
+                        } else if(filename.equals("CityFile.txt")){
+                            // Campos
+                            Campo c5 = new Campo("CityId", "int", 2, true);
+                            Campo c6 = new Campo("CityName", "String", 30, false);
+                            campos_Archivo_Actual.add(c5);
+                            campos_Archivo_Actual.add(c6);
+                            escribir_campos();
+                             DatosRandom datosr = new DatosRandom();
+                            for (int i = 0; i <= 99; i++) {
+                                Ciudad ciudad = new Ciudad(i, datosr.nombreRand());
+                                Registro r = new Registro();
+                                r.setCampos(campos_Archivo_Actual);
+                                r.getCampos().get(0).setContenido(ciudad.getCityid());
+                                r.getCampos().get(1).setContenido(ciudad.getNamec());
+                                escribir_registro_availist_empty(r);
+                                Key llave = new Key(i, ciudad.getCityid());
+                                arbol.insertarLlave(llave, arbol.getRoot());
+                            }
+                            //arbol.guardarBTree("./Archivos/"+jtf_nombre_nuevo_archivo.getText()+".bin");
+                        }
+                        //arbol.guardarBTree("./Archivos/"+jtf_nombre_nuevo_archivo.getText()+".bin");
                         // Crear campos y registros de prueba
 //                        Campo c1 = new Campo("Nombre", "String", 20, false);
 //                        Campo c2 = new Campo("Id", "int", 6, true);
@@ -2578,7 +2623,6 @@ public class Main extends javax.swing.JFrame {
         Key k = EncontrarLlave(arbol.getRoot(), llave);
         if(k != null){
             //System.out.println(k.getRrn());
-            int cantidad_de_campos = campos_Archivo_Actual.size();
             JOptionPane.showMessageDialog(jp_buscar_registros, leer_registro(k.getRrn()).replace("|", ", "));
         } else {
             JOptionPane.showMessageDialog(jp_buscar_registros, "El registro solicitado no existe!");
@@ -2622,7 +2666,7 @@ public class Main extends javax.swing.JFrame {
         });
     }
     
-    void cargar_Btree(){
+    void cargar_arbol(){
         arbol = new BTree();
     }
     
