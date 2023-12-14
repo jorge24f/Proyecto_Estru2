@@ -3274,5 +3274,4 @@ public class Main extends javax.swing.JFrame {
     private int longitud_max_nombre_campo = 10;
     private int longitud_max_tipo_campo = 10;
     private BTree arbol = new BTree();
-    //private Registro registro;
 }

@@ -113,7 +113,6 @@ public class BTree implements Serializable {
             }
         }
 
-        //System.out.println("entro a cuando no es hoja. pos: " + pos);
         if (nodo.getKeys()[0] != null && pos == 0 && key.getContenido() < nodo.getKeys()[0].getContenido()) {
             return insertarLlave(key, nodo.getChildNodes()[pos]);
         }
@@ -133,9 +132,7 @@ public class BTree implements Serializable {
 
         newNode2.getKeys()[0] = temp[3];
         newNode2.getKeys()[1] = temp[4];
-
-        //newNode1.setParent(nodo);
-        //newNode2.setParent(nodo);
+        
         return new Node[]{newNode1, newNode2};
     }
 
@@ -146,16 +143,15 @@ public class BTree implements Serializable {
             nodo.getChildNodes()[i] = nodo.getChildNodes()[i - 1];
         }
 
-        // Insert the child into the appropriate position
+        // Insert the child en lugar correcto
         nodo.getChildNodes()[index] = child;
 
-        // Update the parent reference for the child
         if (child != null) {
             child.setParent(nodo);
         }
     }
 
-    // Helper method to insert a key into a leaf node
+    // Helper method
     private void insertarEnHoja(Key key, Node nodo) {
 
         for (int i = 0; i < nodo.getKeys().length; i++) {
@@ -193,30 +189,24 @@ public class BTree implements Serializable {
             return false;
         }
 
-        // Find the index of the key in the current node
         int index = findKeyIndex(currentNode, key);
 
-        // If the key is present in the current node
         if (index < currentNode.getKeys().length && currentNode.getKeys()[index] != null
                 && currentNode.getKeys()[index].equals(key)) {
 
-            // If the node is a leaf, delete the key directly
             if (currentNode.isLeaf()) {
                 deleteKeyFromLeaf(currentNode, index);
             } else { // If the node is not a leaf, delete the key from the appropriate child
                 deleteKeyFromNonLeaf(currentNode, index);
             }
             return true;
-        } else { // If the key is not present in the current node
-            // Determine whether the last child is the relevant one
+        } else {
             boolean isLastChild = (index == currentNode.getKeys().length);
 
-            // Recursively delete the key from the appropriate child
             boolean keyDeleted = deleteKey(currentNode.getChildNodes()[index], key);
 
-            // If the key is deleted from the child, handle the redistribution or merging
             if (keyDeleted) {
-                handleChildDeletion(currentNode, index, isLastChild);
+                //handleChildDeletion(currentNode, index, isLastChild);
             }
             return keyDeleted;
         }
@@ -232,7 +222,6 @@ public class BTree implements Serializable {
     }
 
     private void deleteKeyFromLeaf(Node node, int index) {
-        // Shift keys to the left to remove the key at the specified index
         for (int i = index; i < node.getKeys().length - 1; i++) {
             node.getKeys()[i] = node.getKeys()[i + 1];
         }
@@ -242,25 +231,21 @@ public class BTree implements Serializable {
     private void deleteKeyFromNonLeaf(Node node, int index) {
         Key key = node.getKeys()[index];
 
-        // If the child that precedes the key has at least two keys, find the predecessor
         if (node.getChildNodes()[index].getKeys().length >= 2) {
             Key predecessor = findPredecessor(node.getChildNodes()[index]);
             node.getKeys()[index] = predecessor;
             deleteKey(node.getChildNodes()[index], predecessor);
         } else if (node.getChildNodes()[index + 1].getKeys().length >= 2) {
-            // If the child that succeeds the key has at least two keys, find the successor
             Key successor = findSuccessor(node.getChildNodes()[index + 1]);
             node.getKeys()[index] = successor;
             deleteKey(node.getChildNodes()[index + 1], successor);
         } else {
-            // Merge the child and its right sibling
             mergeNodes(node, index);
             deleteKey(node.getChildNodes()[index], key);
         }
     }
 
     private Key findPredecessor(Node node) {
-        // Find the rightmost key in the subtree
         while (!node.isLeaf()) {
             node = node.getChildNodes()[node.getKeys().length];
         }
@@ -268,7 +253,6 @@ public class BTree implements Serializable {
     }
 
     private Key findSuccessor(Node node) {
-        // Find the leftmost key in the subtree
         while (!node.isLeaf()) {
             node = node.getChildNodes()[0];
         }
@@ -279,15 +263,12 @@ public class BTree implements Serializable {
         Node leftChild = parentNode.getChildNodes()[index];
         Node rightChild = parentNode.getChildNodes()[index + 1];
 
-        // Move the key from the parent to the left child
         leftChild.getKeys()[leftChild.getKeys().length - 1] = parentNode.getKeys()[index];
 
-        // Move keys from the right child to the left child
         for (int i = 0; i < rightChild.getKeys().length; i++) {
             leftChild.getKeys()[i + leftChild.getKeys().length] = rightChild.getKeys()[i];
         }
 
-        // Move child pointers from the right child to the left child
         for (int i = 0; i < rightChild.getChildNodes().length; i++) {
             leftChild.getChildNodes()[i + leftChild.getChildNodes().length] = rightChild.getChildNodes()[i];
             if (rightChild.getChildNodes()[i] != null) {
@@ -295,99 +276,17 @@ public class BTree implements Serializable {
             }
         }
 
-        // Shift keys in the parent to fill the gap
         for (int i = index; i < parentNode.getKeys().length - 1; i++) {
             parentNode.getKeys()[i] = parentNode.getKeys()[i + 1];
         }
         parentNode.getKeys()[parentNode.getKeys().length - 1] = null;
 
-        // Shift child pointers in the parent to fill the gap
         for (int i = index + 1; i < parentNode.getChildNodes().length - 1; i++) {
             parentNode.getChildNodes()[i] = parentNode.getChildNodes()[i + 1];
         }
         parentNode.getChildNodes()[parentNode.getChildNodes().length - 1] = null;
     }
 
-    private void handleChildDeletion(Node parentNode, int childIndex, boolean isLastChild) {
-        Node childNode = parentNode.getChildNodes()[childIndex];
-
-        // If the child has less than the required minimum number of keys, handle redistribution or merging
-        if (childNode.getKeys().length < 2) {
-            // Find the index of the adjacent sibling
-            childIndex = parentNode.getKeys().length;
-            int siblingIndex = childIndex;
-
-            // If the left sibling has more than the minimum number of keys, redistribute
-            if (!isLastChild && parentNode.getChildNodes()[childIndex + 1].getKeys().length >= 2) {
-                redistributeKeys(parentNode, childIndex, childIndex + 1, false);
-            } else if (childIndex > 0 && parentNode.getChildNodes()[childIndex - 1].getKeys().length >= 2) {
-                // If the right sibling has more than the minimum number of keys, redistribute
-                redistributeKeys(parentNode, childIndex - 1, childIndex, true);
-            } else {
-                // Merge with the left sibling (if available) or the right sibling
-                if (childIndex == parentNode.getKeys().length) {
-                    mergeNodes(parentNode, childIndex - 1);
-                } else {
-                    mergeNodes(parentNode, childIndex);
-                }
-            }
-        }
-    }
-
-    private void redistributeKeys(Node parentNode, int leftIndex, int rightIndex, boolean fromLeft) {
-        Node leftChild = parentNode.getChildNodes()[leftIndex];
-        Node rightChild = parentNode.getChildNodes()[rightIndex];
-
-        if (fromLeft) {
-            // Shift keys in the left child to make space for the parent key
-            for (int i = leftChild.getKeys().length - 1; i > 0; i--) {
-                leftChild.getKeys()[i] = leftChild.getKeys()[i - 1];
-            }
-            leftChild.getKeys()[0] = parentNode.getKeys()[leftIndex - 1];
-
-            // Move the rightmost key from the left sibling to the parent
-            parentNode.getKeys()[leftIndex - 1] = rightChild.getKeys()[rightChild.getKeys().length - 1];
-
-            // Move the rightmost child pointer from the left sibling to the left child
-            for (int i = leftChild.getChildNodes().length - 1; i > 0; i--) {
-                leftChild.getChildNodes()[i] = leftChild.getChildNodes()[i - 1];
-            }
-            leftChild.getChildNodes()[0] = rightChild.getChildNodes()[rightChild.getChildNodes().length - 1];
-
-            // Update the parent reference for the moved child
-            if (leftChild.getChildNodes()[0] != null) {
-                leftChild.getChildNodes()[0].setParent(leftChild);
-            }
-
-            // Shift keys in the right sibling to fill the gap
-            for (int i = rightChild.getKeys().length - 1; i > 0; i--) {
-                rightChild.getKeys()[i] = rightChild.getKeys()[i - 1];
-            }
-            rightChild.getKeys()[0] = null;
-
-            // Shift child pointers in the right sibling to fill the gap
-            for (int i = rightChild.getChildNodes().length - 1; i > 0; i--) {
-                rightChild.getChildNodes()[i] = rightChild.getChildNodes()[i - 1];
-            }
-            rightChild.getChildNodes()[0] = null;
-        } else {
-            // Move the leftmost key from the right sibling to the parent
-            parentNode.getKeys()[leftIndex] = rightChild.getKeys()[0];
-
-            // Shift keys in the right sibling to remove the moved key
-            for (int i = 0; i < rightChild.getKeys().length - 1; i++) {
-                rightChild.getKeys()[i] = rightChild.getKeys()[i + 1];
-            }
-            rightChild.getKeys()[rightChild.getKeys().length - 1] = null;
-
-            // Shift child pointers in the right sibling to remove the moved child
-            for (int i = 0; i < rightChild.getChildNodes().length - 1; i++) {
-                rightChild.getChildNodes()[i] = rightChild.getChildNodes()[i + 1];
-            }
-            rightChild.getChildNodes()[rightChild.getChildNodes().length - 1] = null;
-        }
-    }
-    
     @Override
     public String toString() {
         return root.toString();
